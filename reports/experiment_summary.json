@@ -1,0 +1,44 @@
+{
+  "batch_id": "20260915T233520Z-ca0807e9",
+  "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
+  "source_rows": 2930,
+  "source_columns": 82,
+  "predictor_count": 14,
+  "missing_by_feature": {
+    "Lot Area": 0,
+    "Lot Frontage": 490,
+    "Gr Liv Area": 0,
+    "Overall Qual": 0,
+    "Year Built": 0,
+    "Full Bath": 0,
+    "Garage Cars": 1,
+    "Total Bsmt SF": 1,
+    "Bedroom AbvGr": 0,
+    "Neighborhood": 0,
+    "House Style": 0,
+    "Bldg Type": 0,
+    "MS Zoning": 0,
+    "Central Air": 0
+  },
+  "split_rows": {
+    "train": 1758,
+    "validation": 586,
+    "test": 586
+  },
+  "best_configuration": "rf_200_full",
+  "best_run_id": "8693a79540914f5ba7aea39557683487",
+  "selection_metric": "validation_mae",
+  "best_validation_mae": 16634.130788639686,
+  "test_metrics": {
+    "mae": 17772.875496099463,
+    "rmse": 30214.752456387305,
+    "r2": 0.8861333572473699
+  },
+  "median_baseline_test_metrics": {
+    "mae": 63822.74232081911,
+    "rmse": 94205.41165242254,
+    "r2": -0.10690446269618814
+  },
+  "performance_gate": "passed",
+  "test_set_used_for_selection": false
+}

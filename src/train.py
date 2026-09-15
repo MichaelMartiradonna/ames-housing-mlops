@@ -36,6 +36,7 @@ def build_model(config: dict, experiment_key: str | None = None) -> Pipeline:
 def evaluate_test_run(model: Pipeline, splits: DataSplits, config: dict, run_id: str) -> dict:
     metrics = regression_metrics(splits.y_test, model.predict(splits.X_test))
     with mlflow.start_run(run_id=run_id):
+        mlflow.set_tag("test_evaluated", "true")
         mlflow.log_metrics({f"test_{key}": value for key, value in metrics.items()})
         try:
             enforce_performance(metrics, config)
@@ -85,7 +86,8 @@ def train_run(
         model.fit(splits.X_train, splits.y_train)
         metrics = regression_metrics(splits.y_validation, model.predict(splits.X_validation))
         mlflow.log_metrics({f"validation_{key}": value for key, value in metrics.items()})
-        sample = splits.X_train.head(5)
+        # Float inputs preserve missing-value support in MLflow's saved schema.
+        sample = model.named_steps["preprocess"].named_steps["validate"].transform(splits.X_train.head(5))
         requirements = [
             line for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
             if line.startswith(("numpy==", "pandas==", "scikit-learn==", "mlflow=="))
@@ -104,8 +106,6 @@ def train_run(
     print(f"{experiment_key}: validation MAE ${metrics['mae']:,.2f}; RMSE ${metrics['rmse']:,.2f}; R² {metrics['r2']:.4f}")
     if evaluate_test:
         test_metrics = evaluate_test_run(model, splits, config, run_id)
-        with mlflow.start_run(run_id=run_id):
-            mlflow.set_tag("test_evaluated", "true")
         print("Test metrics: " + json.dumps(test_metrics, indent=2))
         output = ROOT / "artifacts" / "training_result.json"
         output.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,84 @@
+{
+  "scenario": "control",
+  "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
+  "reference_rows": 1758,
+  "current_rows": 1758,
+  "feature_count": 14,
+  "feature_p_value_threshold": 0.05,
+  "drifted_features": [],
+  "drift_share": 0.0,
+  "drift_share_threshold": 0.3,
+  "alert": false,
+  "columns": {
+    "Lot Area": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Lot Frontage": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Gr Liv Area": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Overall Qual": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Year Built": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Full Bath": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Garage Cars": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Total Bsmt SF": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Bedroom AbvGr": {
+      "method": "ks",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Neighborhood": {
+      "method": "chisquare",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "House Style": {
+      "method": "chisquare",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Bldg Type": {
+      "method": "chisquare",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "MS Zoning": {
+      "method": "chisquare",
+      "p_value": 1.0,
+      "drifted": false
+    },
+    "Central Air": {
+      "method": "chisquare",
+      "p_value": 1.0,
+      "drifted": false
+    }
+  }
+}

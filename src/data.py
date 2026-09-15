@@ -63,6 +63,9 @@ def load_dataset(config: dict, *, verify_hash: bool = True) -> pd.DataFrame:
 
 def split_dataset(frame: pd.DataFrame, config: dict) -> DataSplits:
     X = frame.loc[:, feature_names(config)].copy(deep=True)
+    # Float columns retain missing values and match the exported MLflow schema.
+    numeric = config["data"]["numeric_features"]
+    X[numeric] = X[numeric].astype(float)
     y = frame[config["data"]["target"]].astype(float).copy()
     train_X, test_X, train_y, test_y = train_test_split(
         X, y, test_size=config["split"]["test_size"], random_state=config["random_seed"]
