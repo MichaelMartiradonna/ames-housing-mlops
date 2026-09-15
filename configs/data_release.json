@@ -1,0 +1,13 @@
+{
+  "release_url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/download/data-v1/ames-dvc-remote-v1.zip",
+  "archive_sha256": "5c41c37bfc26b135b13cff86c4b646a0cbcae58c3687bf127c18514b3867dddf",
+  "source_url": "https://jse.amstat.org/v19n3/decock/AmesHousing.txt",
+  "source_sha256": "6cfe6cb525ba437de428653a1040e2aed7d696640bf75203786a6d7a0e67cfcc",
+  "dvc_md5": "c2997eb69ab4bf946b9fbdb7e6805e36",
+  "objects": {
+    "files/md5/c2/997eb69ab4bf946b9fbdb7e6805e36": {
+      "sha256": "6cfe6cb525ba437de428653a1040e2aed7d696640bf75203786a6d7a0e67cfcc",
+      "size": 960807
+    }
+  }
+}

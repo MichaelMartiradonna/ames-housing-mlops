@@ -1,0 +1,85 @@
+project_name: ames-housing-mlops
+random_seed: 42
+data:
+  source_url: https://jse.amstat.org/v19n3/decock/AmesHousing.txt
+  source_sha256: 6cfe6cb525ba437de428653a1040e2aed7d696640bf75203786a6d7a0e67cfcc
+  raw_path: data/raw/AmesHousing.tsv
+  pointer_path: data/raw/AmesHousing.tsv.dvc
+  expected_rows: 2930
+  target: SalePrice
+  target_range: [10000, 1000000]
+  numeric_features:
+    - Lot Area
+    - Lot Frontage
+    - Gr Liv Area
+    - Overall Qual
+    - Year Built
+    - Full Bath
+    - Garage Cars
+    - Total Bsmt SF
+    - Bedroom AbvGr
+  categorical_features:
+    - Neighborhood
+    - House Style
+    - Bldg Type
+    - MS Zoning
+    - Central Air
+  numeric_ranges:
+    Lot Area: [1, 250000]
+    Lot Frontage: [1, 400]
+    Gr Liv Area: [1, 6500]
+    Overall Qual: [1, 10]
+    Year Built: [1800, 2010]
+    Full Bath: [0, 10]
+    Garage Cars: [0, 10]
+    Total Bsmt SF: [0, 7000]
+    Bedroom AbvGr: [0, 20]
+split:
+  test_size: 0.2
+  validation_size: 0.2
+model:
+  type: RandomForestRegressor
+  n_jobs: 2
+  selected_experiment: rf_200_full
+experiments:
+  rf_100_depth6:
+    n_estimators: 100
+    max_depth: 6
+    min_samples_leaf: 1
+  rf_100_full:
+    n_estimators: 100
+    max_depth: null
+    min_samples_leaf: 1
+  rf_200_full:
+    n_estimators: 200
+    max_depth: null
+    min_samples_leaf: 1
+  rf_200_leaf3:
+    n_estimators: 200
+    max_depth: null
+    min_samples_leaf: 3
+  rf_200_depth12_leaf2:
+    n_estimators: 200
+    max_depth: 12
+    min_samples_leaf: 2
+tracking:
+  database_path: artifacts/mlflow.db
+  artifact_path: artifacts/mlflow
+  experiment_name: ames-housing
+evaluation:
+  primary_metric: mae
+  max_mae: 35000
+  min_r2: 0.75
+monitoring:
+  drift_share_threshold: 0.30
+  numeric_method: ks
+  categorical_method: chisquare
+  feature_threshold: 0.05
+  numeric_multipliers:
+    Lot Area: 1.8
+    Lot Frontage: 1.4
+    Gr Liv Area: 1.5
+    Total Bsmt SF: 1.5
+  neighborhood_fraction: 0.8
+  neighborhood_value: NAmes
+  reports_path: reports

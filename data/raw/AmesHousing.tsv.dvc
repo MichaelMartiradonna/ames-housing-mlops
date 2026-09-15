@@ -1,0 +1,5 @@
+outs:
+- md5: c2997eb69ab4bf946b9fbdb7e6805e36
+  size: 960807
+  hash: md5
+  path: AmesHousing.tsv
