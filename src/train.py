@@ -97,6 +97,8 @@ def train_run(
             input_example=sample,
             pip_requirements=requirements,
             code_paths=[str(ROOT / "src")],
+            serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_SKOPS,
+            skops_trusted_types=["numpy.dtype", "src.preprocessing.FrameValidator"],
         )
         run_id = run.info.run_id
     print(f"{experiment_key}: validation MAE ${metrics['mae']:,.2f}; RMSE ${metrics['rmse']:,.2f}; R² {metrics['r2']:.4f}")

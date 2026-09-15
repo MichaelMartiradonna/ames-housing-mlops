@@ -7,11 +7,10 @@ htmlcov/
 .env
 .env.*
 !.env.example
-data/*
-!data/raw/
-data/raw/*
-!data/raw/*.dvc
-!data/raw/.gitignore
+data/**/*.tsv
+data/**/*.csv
+data/**/*.parquet
+data/**/*.zip
 artifacts/
 .dvc-remote/
 .verification/
