@@ -6,6 +6,15 @@ A reproducible machine-learning workflow for estimating historical home sale pri
 
 The objective is reliable model development: identifiable data versions, comparable experiments, explicit acceptance gates, and observable changes in incoming features. This repository demonstrates those practices locally and in CI; it does not operate a live valuation service.
 
+## Verified results
+
+- Selected model: 200-tree random forest, unlimited depth, minimum leaf size 1.
+- Held-out test results: **MAE $17,773; RMSE $30,215; R² 0.886**, passing both planned acceptance gates.
+- **18 passing tests**, including saved-model reload with missing values and an unseen category.
+- Drift control: **0 of 14** predictors; simulated shift: **5 of 14 (35.71%)**, correctly returning an alert above 30%.
+
+Full results and their limits are documented in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md).
+
 ## Dataset and prediction task
 
 The [original Ames Housing dataset](https://jse.amstat.org/v19n3/decock/AmesHousing.txt) describes **2,930 property sales from 2006–2010**. It contains 82 columns, including identifiers and the `SalePrice` target. The model uses 14 predictors:
@@ -138,7 +147,7 @@ Open [localhost:5000](http://127.0.0.1:5000) and select `ames-housing`. Run the 
 pytest tests/ -v
 ```
 
-The suite covers six preprocessing behaviors, three actual-data validation checks, and two model validation checks. The model fixture trains on a fixed 1,000-row subset of the training partition and predicts on the reserved test partition. Additional failure-path tests check performance-gate rejection and integrity/path handling for downloaded data.
+The suite covers six preprocessing behaviors, three actual-data validation checks, and two model validation checks. The model fixture trains on a fixed 1,000-row subset of the training partition and predicts on the reserved test partition. Additional tests check performance-gate rejection, integrity/path handling for downloaded data, control and shifted monitoring results, and predictions after reloading an MLflow model artifact.
 
 The [GitHub Actions workflow](.github/workflows/mlops.yml) runs on pushes to `main` and pull requests targeting `main`:
 

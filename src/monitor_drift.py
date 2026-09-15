@@ -88,7 +88,11 @@ def run_monitor(config: dict, scenario: str, *, write_reports: bool = True) -> d
     if write_reports:
         directory = project_path(settings["reports_path"])
         directory.mkdir(parents=True, exist_ok=True)
-        snapshot.save_html(str(directory / f"drift_{scenario}.html"))
+        html_path = directory / f"drift_{scenario}.html"
+        snapshot.save_html(str(html_path))
+        # Normalize whitespace-only template lines for clean version-control diffs.
+        html_lines = html_path.read_text(encoding="utf-8").splitlines()
+        html_path.write_text("\n".join(line if line.strip() else "" for line in html_lines) + "\n", encoding="utf-8")
         (directory / f"drift_{scenario}.json").write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     return summary
 

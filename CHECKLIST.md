@@ -20,8 +20,8 @@ This checklist maps the repository to the required project components. Checked i
 - [x] `mlflow.search_runs()` ranks the comparable batch by validation MAE.
 - [x] Selected configuration and held-out test metrics recorded; planned thresholds passed.
 - [x] Training returns failure when a performance threshold is missed.
-- [ ] Final saved-model reload contract and full test suite verified together.
-- [ ] Five-run MLflow screenshot included with reproduction instructions.
+- [x] Final saved-model reload contract and full test suite verified together.
+- [x] [Five-run MLflow screenshot](reports/mlflow_experiments.png) included with reproduction instructions.
 
 ## pytest
 
@@ -30,7 +30,7 @@ This checklist maps the repository to the required project components. Checked i
 - [x] Two model tests: prediction type/shape and minimum performance on a held-out set after small-sample training.
 - [x] Failure-path tests cover performance gates, checksums, and archive extraction boundaries.
 - [x] Monitoring tests cover unchanged data and the expected synthetic drift.
-- [ ] Full suite passes with `pytest tests/ -v` after final artifact-contract changes.
+- [x] Full suite passes with `pytest tests/ -v` after final artifact-contract changes: 18 tests passed.
 
 ## GitHub Actions
 
