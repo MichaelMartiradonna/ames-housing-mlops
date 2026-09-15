@@ -10,7 +10,8 @@ This checklist maps the repository to the required project components. Checked i
 - [x] Git and DVC initialized; raw data excluded from Git and [DVC pointer committed](data/raw/AmesHousing.tsv.dvc).
 - [x] Portable local remote configured and [release manifest generated](configs/data_release.json).
 - [ ] Public GitHub repository and data release attachment available.
-- [ ] Clean checkout restores the remote and retrieves the dataset with `dvc pull`.
+- [x] Clean checkout restores the packaged remote and retrieves the dataset with `dvc pull`.
+- [ ] Clean checkout downloads the published release attachment automatically.
 
 ## Training and MLflow
 
@@ -54,6 +55,7 @@ This checklist maps the repository to the required project components. Checked i
 - [x] README describes setup, restoration, training, experiments, tests, CI, and monitoring.
 - [x] [Retrospective](PROJECT_SUMMARY.md) explains decisions, findings, lessons, safeguards, limitations, and future improvements.
 - [x] Future improvements are separated from implemented capabilities.
-- [ ] Grader workflow rehearsed from a clean checkout.
+- [x] Local grader commands rehearsed from a clean checkout: tests, five experiments, comparison, training, and monitoring.
+- [ ] External grader checks verified: public release and successful GitHub Actions run.
 - [ ] Final documentation, evidence, repository state, and public links checked.
 - [ ] Public repository URL ready for submission.

@@ -1,0 +1,20 @@
+{
+  "implementation_revision": "2538158",
+  "environment": "Windows, Python 3.12.14; clean Git checkout using the installed project virtual environment",
+  "local_checks": {
+    "dependency_consistency": "pip check passed",
+    "data_bootstrap_from_release_archive": "passed; SHA-256 verified",
+    "dvc_pull_into_empty_checkout": "passed; one data file fetched",
+    "pytest": {"passed": 18, "failed": 0, "warnings": 10},
+    "five_experiment_batch": "passed; selected rf_200_full with matching reference metrics",
+    "programmatic_comparison": "passed",
+    "selected_training_exit_code": 0,
+    "deliberately_impossible_performance_gate_exit_code": 1,
+    "unchanged_control_exit_code": 0,
+    "simulated_drift_exit_code": 1,
+    "evidently_html_rendering": "visually verified",
+    "mlflow_five_run_screenshot": "reports/mlflow_experiments.png"
+  },
+  "public_release_download": "pending",
+  "github_actions": "pending"
+}

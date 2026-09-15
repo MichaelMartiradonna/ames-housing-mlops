@@ -14,6 +14,7 @@ The objective is reliable model development: identifiable data versions, compara
 - Drift control: **0 of 14** predictors; simulated shift: **5 of 14 (35.71%)**, correctly returning an alert above 30%.
 
 Full results and their limits are documented in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md).
+Verification status is recorded in [reports/verification.json](reports/verification.json) and [CHECKLIST.md](CHECKLIST.md).
 
 ## Dataset and prediction task
 
@@ -117,7 +118,7 @@ The experiments vary tree count, tree depth, and minimum leaf size. Selection us
 
 Each run records effective model parameters, preprocessing settings, the DVC content hash, split sizes, source revision metadata, the configuration file, metrics, and the complete preprocessing/model pipeline. The model artifact includes an input signature and the custom preprocessing code.
 
-The comparison command queries MLflow with `mlflow.search_runs()` and compares the latest complete batch for the current dataset version. It does not compare unrelated datasets or incomplete batches. Repeating the experiment command creates a new batch; previous runs remain available locally.
+The comparison command queries MLflow with `mlflow.search_runs()` and compares the latest batch for the current dataset version, requiring one completed run per configured experiment. It rejects incomplete batches. Repeating the experiment command creates a new batch; previous runs remain available locally.
 
 Run the selected configuration and enforce test-set acceptance gates:
 
