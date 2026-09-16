@@ -90,9 +90,10 @@ def train_run(
         sample = model.named_steps["preprocess"].named_steps["validate"].transform(splits.X_train.head(5))
         requirements = [
             line for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
-            if line.startswith(("numpy==", "pandas==", "scikit-learn==", "mlflow=="))
+            if line.startswith(("numpy==", "pandas==", "scikit-learn==", "mlflow==", "skops=="))
         ]
-        # Ship the custom transformer with the model and allow only its required types.
+        # Trust only the types in this locally fitted pipeline. Skops 0.15 requires
+        # explicit trust for Tree; this is not approval to load external model files.
         mlflow.sklearn.log_model(
             model,
             name="model",
@@ -101,7 +102,9 @@ def train_run(
             pip_requirements=requirements,
             code_paths=[str(ROOT / "src")],
             serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_SKOPS,
-            skops_trusted_types=["numpy.dtype", "src.preprocessing.FrameValidator"],
+            skops_trusted_types=[
+                "numpy.dtype", "src.preprocessing.FrameValidator", "sklearn.tree._tree.Tree"
+            ],
         )
         run_id = run.info.run_id
     print(f"{experiment_key}: validation MAE ${metrics['mae']:,.2f}; RMSE ${metrics['rmse']:,.2f}; R² {metrics['r2']:.4f}")

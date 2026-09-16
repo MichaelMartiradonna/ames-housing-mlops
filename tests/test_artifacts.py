@@ -2,6 +2,8 @@
 
 from copy import deepcopy
 from dataclasses import replace
+from importlib.metadata import version
+from pathlib import Path
 
 import mlflow
 import mlflow.pyfunc
@@ -24,6 +26,10 @@ def test_logged_pipeline_preserves_predictions_with_missing_and_unseen_inputs(co
             isolated, config["model"]["selected_experiment"], smaller, evaluate_test=False
         )
         loaded = mlflow.pyfunc.load_model(f"runs:/{run_id}/model")
+        artifact_dir = Path(mlflow.artifacts.download_artifacts(artifact_uri=f"runs:/{run_id}/model"))
+        # Recreating the saved model's environment must use the tested serializer.
+        requirements = (artifact_dir / "requirements.txt").read_text(encoding="utf-8")
+        assert f"skops=={version('skops')}" in requirements.splitlines()
         future = splits.X_test.head(3).copy()
         future.loc[future.index[0], "Full Bath"] = np.nan
         future.loc[future.index[0], "Neighborhood"] = "Previously unseen neighborhood"

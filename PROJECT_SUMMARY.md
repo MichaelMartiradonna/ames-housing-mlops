@@ -42,7 +42,7 @@ CI subsequently reuses the fixed test set as a regression gate. This is useful f
 
 A saved estimator alone would depend on undocumented external transformations. The MLflow artifact therefore includes validation, imputation, encoding, and the regressor as one pipeline. Numeric inputs use floating-point types so missing values remain representable in the saved schema.
 
-The model uses Skops serialization with an explicit allowlist for the project's validation transformer and NumPy's dtype. A persistence test checks that a reloaded artifact produces matching predictions for missing numeric values and previously unseen categories.
+The model uses pinned Skops serialization with an explicit allowlist for the project's validation transformer, NumPy's dtype, and the random forest's internal tree type. The tree type is trusted because the artifact is produced by the project's own fitted pipeline; external model files still require a separate trust decision. A persistence test checks that a reloaded artifact produces matching predictions for missing numeric values and previously unseen categories.
 
 ### Keep data and generated artifacts outside source history
 
@@ -59,6 +59,8 @@ Performance gates fail the training command when MAE or R² misses its configure
 **Missingness must be measured, not assumed.** Lot frontage is missing in 490 records—approximately 16.7% of the dataset. Two other selected numeric features have one missing value each. Median imputation keeps those observations available while avoiding test-data influence on fitted preprocessing.
 
 **An apparently working model can still have an incomplete artifact contract.** In-memory prediction is only part of reproducibility. Explicit type handling, serialization dependencies, and a reload test are needed to preserve the same behavior after saving.
+
+**Successful runs still require maintenance review.** GitHub action deprecation notices prompted an update to Node 24 actions. A fresh installation then picked up Skops 0.15, released during final verification, whose security checks require explicit trust for tree objects. The existing reload test caught this change. Pinning the serializer and recording the specific trusted types made the artifact requirements reproducible without changing model settings or acceptance thresholds.
 
 **Data retrieval must be tested from an empty checkout.** Local caches can conceal missing remote objects or discovery problems. Ignore rules must exclude data bytes while allowing DVC to discover its pointers. The release manifest and clean-checkout verification make this dependency visible.
 
