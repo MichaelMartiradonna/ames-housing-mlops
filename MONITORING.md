@@ -21,15 +21,15 @@ The shifted scenario detected **5 of 14 features**, a **35.71% drift share**, an
 - **Lot Frontage:** multiplied by 1.4, shifting frontage measurements upward while preserving missing entries.
 - **Gr Liv Area:** multiplied by 1.5, increasing above-ground living area.
 - **Total Bsmt SF:** multiplied by 1.5, increasing basement area.
-- **Neighborhood:** 80% of records were deterministically selected and assigned `NAmes`, concentrating the simulated population in one neighborhood.
+- **Neighborhood:** 1,406 records (approximately 80%) were selected using the fixed random seed and assigned `NAmes`. Because some records already had that label, the final `NAmes` share was **82.42%**, compared with **15.53%** in the reference data.
 
-The remaining nine feature columns were unchanged and did not drift. The numerical tests for the modified features returned extremely small p-values; two reported values round to zero because of numerical precision. That is evidence of a strong distribution difference in this simulation, not a literal probability of zero.
+The remaining nine feature columns were unchanged and did not drift. Tests for the five modified features returned extremely small p-values; `Lot Area` and `Neighborhood` were reported as zero at machine precision. These values indicate strong distribution differences in this simulation. They do not quantify the probability that the model has lost accuracy.
 
 Evidence: [control summary](reports/drift_control.json), [shifted summary](reports/drift_drifted.json), [control HTML](reports/drift_control.html), and [shifted HTML](reports/drift_drifted.html). Download the HTML files and open them in a browser; GitHub's source view does not render the interactive report.
 
 ## 2. Would this drift likely affect model performance?
 
-It could. Property size and neighborhood are relevant inputs to a sale-price model. Material shifts can move incoming properties away from the combinations represented during training, changing predictions and potentially increasing error.
+These large shifts create a plausible risk to prediction accuracy. Property size and neighborhood are relevant inputs to a sale-price model. Material shifts can move incoming properties away from the combinations represented during training, changing predictions and potentially increasing error.
 
 However, **feature drift alone does not establish a loss of predictive accuracy**. The simulation does not provide new, trustworthy sale-price labels. It also changes individual distributions without reconstructing all realistic relationships between home characteristics. Therefore, this project does not report a production MAE or claim that the alert proves model degradation.
 
