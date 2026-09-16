@@ -39,7 +39,7 @@ All required project components were verified on September 16, 2026. Supporting 
 - [x] Test job installs dependencies, restores data, and runs the full suite.
 - [x] Dependent training job installs dependencies, restores data, trains, and enforces thresholds.
 - [x] Workflow artifacts preserve test and training evidence.
-- [x] [Successful complete pipeline](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327) visible in the Actions history; both jobs passed and retained their artifacts.
+- [x] [Successful complete pipeline](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35103395139) visible in the Actions history; both jobs passed, retained their artifacts, and produced zero workflow annotations.
 
 ## Drift monitoring
 

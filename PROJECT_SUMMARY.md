@@ -16,7 +16,7 @@ Evidence is recorded in [the experiment summary](reports/experiment_summary.json
 
 ### Final verification
 
-A fresh clone of the public repository downloaded the release attachment without credentials, verified its checksums, restored the dataset with DVC, and passed all 18 tests on Windows. Both monitoring scenarios returned the expected exit codes. The [GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327) independently installed dependencies and restored data on separate Ubuntu runners; testing and gated training both passed. Its saved test results and model metrics matched the documented outcomes.
+A fresh clone of the public repository downloaded the release attachment without credentials, verified its checksums, restored the dataset with DVC, and passed all 18 tests on Windows. Both monitoring scenarios returned the expected exit codes. The [GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35103395139) independently installed dependencies and restored data on separate Ubuntu runners; testing and gated training both passed with zero workflow annotations. Its saved test results and model metrics matched the documented outcomes. After the serializer update, all five local experiments were recreated with unchanged metrics and refreshed model artifacts.
 
 The final requirements review found no outstanding required components. Documentation links, data and model exclusions, configuration use, and decision comments were checked. The implementation remains within the agreed scope; the recommendations below are potential extensions.
 

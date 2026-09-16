@@ -1,5 +1,5 @@
 {
-  "batch_id": "20260915T234300Z-aa6ed6b1",
+  "batch_id": "20260916T134012Z-d7d4d092",
   "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
   "source_rows": 2930,
   "source_columns": 82,
@@ -26,7 +26,7 @@
     "test": 586
   },
   "best_configuration": "rf_200_full",
-  "best_run_id": "b3683c6a536b4106a76a722b3e6f30f6",
+  "best_run_id": "442366b05d8647f28820ff59ecb70756",
   "selection_metric": "validation_mae",
   "best_validation_mae": 16634.130788639686,
   "test_metrics": {

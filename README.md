@@ -11,7 +11,7 @@ The objective is reliable model development: identifiable data versions, compara
 - Selected model: 200-tree random forest, unlimited depth, minimum leaf size 1.
 - Held-out test results: **MAE $17,773; RMSE $30,215; R² 0.886**, passing both planned acceptance gates.
 - **18 passing tests**, including saved-model reload with missing values and an unseen category.
-- [Successful GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327): tests and gated training passed on separate Ubuntu runners.
+- [Successful GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35103395139): tests and gated training passed on separate Ubuntu runners, with zero workflow annotations.
 - Drift control: **0 of 14** predictors; simulated shift: **5 of 14 (35.71%)**, correctly returning an alert above 30%.
 
 Full results and their limits are documented in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md).
