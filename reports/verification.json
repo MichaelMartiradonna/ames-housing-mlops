@@ -15,6 +15,40 @@
     "evidently_html_rendering": "visually verified",
     "mlflow_five_run_screenshot": "reports/mlflow_experiments.png"
   },
-  "public_release_download": "pending",
-  "github_actions": "pending"
+  "final_audit_at": "2026-09-16T13:07:21Z",
+  "public_repository": "https://github.com/MichaelMartiradonna/ames-housing-mlops",
+  "public_checkout": {
+    "revision": "726ffa364bfd2152bf4f6f86a3cd0a3f7080d748",
+    "environment": "Windows, Python 3.12.14; fresh GitHub clone using the installed project virtual environment",
+    "bootstrap": "passed; public HTTPS download without credentials; archive and object SHA-256 verified",
+    "dvc_pull": "passed; one data file fetched into empty checkout",
+    "source_sha256": "6cfe6cb525ba437de428653a1040e2aed7d696640bf75203786a6d7a0e67cfcc",
+    "pytest": {"passed": 18, "failed": 0, "warnings": 10},
+    "unchanged_control_exit_code": 0,
+    "simulated_drift_exit_code": 1
+  },
+  "public_release_download": {
+    "status": "passed",
+    "release_url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/tag/data-v1",
+    "archive_sha256": "5c41c37bfc26b135b13cff86c4b646a0cbcae58c3687bf127c18514b3867dddf"
+  },
+  "github_actions": {
+    "status": "success",
+    "run_url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327",
+    "revision": "726ffa364bfd2152bf4f6f86a3cd0a3f7080d748",
+    "environment": "Ubuntu 24.04, Python 3.12; dependencies installed independently in each job",
+    "test_job": "success",
+    "training_job": "success",
+    "pytest": {"tests": 18, "failures": 0, "errors": 0, "skipped": 0},
+    "test_metrics": {"mae": 17772.875496099463, "rmse": 30214.752456387305, "r2": 0.8861333572473699},
+    "performance_gate": "passed",
+    "artifacts_verified": ["test-results", "training-evidence"]
+  },
+  "requirements_audit": {
+    "missing_required_components": [],
+    "dataset_and_model_files_in_git_history": false,
+    "relative_documentation_links": "passed",
+    "professional_language_and_decision_comments": "reviewed",
+    "scope": "Complete local and GitHub workflow; future improvements remain documented extensions"
+  }
 }

@@ -14,6 +14,12 @@ Both planned acceptance gates passed: MAE no higher than $35,000 and R² no lowe
 
 Evidence is recorded in [the experiment summary](reports/experiment_summary.json), [the ranked runs](reports/experiment_comparison.csv), [the completion checklist](CHECKLIST.md), and [GitHub Actions](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml).
 
+### Final verification
+
+A fresh clone of the public repository downloaded the release attachment without credentials, verified its checksums, restored the dataset with DVC, and passed all 18 tests on Windows. Both monitoring scenarios returned the expected exit codes. The [GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327) independently installed dependencies and restored data on separate Ubuntu runners; testing and gated training both passed. Its saved test results and model metrics matched the documented outcomes.
+
+The final requirements review found no outstanding required components. Documentation links, data and model exclusions, configuration use, and decision comments were checked. The implementation remains within the agreed scope; the recommendations below are potential extensions.
+
 ## Decisions and rationale
 
 ### Select a dataset with a clear target and modest preparation

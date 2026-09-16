@@ -1,6 +1,6 @@
 # Completion Checklist
 
-This checklist maps the repository to the required project components. Checked items have implementation or verification evidence; publication checks remain open until the corresponding external result is confirmed.
+All required project components were verified on September 16, 2026. Supporting evidence is linked below and recorded in [the verification summary](reports/verification.json).
 
 ## Dataset and repository
 
@@ -9,9 +9,9 @@ This checklist maps the repository to the required project components. Checked i
 - [x] Separate source modules, YAML configuration, tests, workflow, pinned dependencies, and Git exclusions.
 - [x] Git and DVC initialized; raw data excluded from Git and [DVC pointer committed](data/raw/AmesHousing.tsv.dvc).
 - [x] Portable local remote configured and [release manifest generated](configs/data_release.json).
-- [ ] Public GitHub repository and data release attachment available.
+- [x] [Public GitHub repository](https://github.com/MichaelMartiradonna/ames-housing-mlops) and [data release attachment](https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/tag/data-v1) available.
 - [x] Clean checkout restores the packaged remote and retrieves the dataset with `dvc pull`.
-- [ ] Clean checkout downloads the published release attachment automatically.
+- [x] Clean checkout downloads the published release attachment automatically without credentials, verifies its checksum, and restores the dataset.
 
 ## Training and MLflow
 
@@ -39,7 +39,7 @@ This checklist maps the repository to the required project components. Checked i
 - [x] Test job installs dependencies, restores data, and runs the full suite.
 - [x] Dependent training job installs dependencies, restores data, trains, and enforces thresholds.
 - [x] Workflow artifacts preserve test and training evidence.
-- [ ] Successful complete pipeline visible in the Actions history.
+- [x] [Successful complete pipeline](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35099450327) visible in the Actions history; both jobs passed and retained their artifacts.
 
 ## Drift monitoring
 
@@ -56,6 +56,6 @@ This checklist maps the repository to the required project components. Checked i
 - [x] [Retrospective](PROJECT_SUMMARY.md) explains decisions, findings, lessons, safeguards, limitations, and future improvements.
 - [x] Future improvements are separated from implemented capabilities.
 - [x] Local grader commands rehearsed from a clean checkout: tests, five experiments, comparison, training, and monitoring.
-- [ ] External grader checks verified: public release and successful GitHub Actions run.
-- [ ] Final documentation, evidence, repository state, and public links checked.
-- [ ] Public repository URL ready for submission.
+- [x] External grader checks verified: public release and successful GitHub Actions run.
+- [x] Final documentation, evidence, repository state, and public links checked; decision comments explain the consequential implementation choices.
+- [x] Public repository URL ready for submission: https://github.com/MichaelMartiradonna/ames-housing-mlops
