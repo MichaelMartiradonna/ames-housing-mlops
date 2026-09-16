@@ -55,9 +55,11 @@ class FrameValidator(TransformerMixin, BaseEstimator):
 
 
 def build_preprocessor(numeric_features: list[str], categorical_features: list[str]) -> Pipeline:
+    """Keep learned imputers and encoding inside the model to prevent data leakage."""
     numeric = SimpleImputer(strategy="median", keep_empty_features=True)
     categorical = Pipeline([
         ("impute", SimpleImputer(strategy="most_frequent", keep_empty_features=True)),
+        # New categories receive zeros instead of changing the fitted feature layout.
         ("encode", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
     ])
     return Pipeline([

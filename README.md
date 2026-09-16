@@ -47,7 +47,7 @@ flowchart LR
 - `configs/`: model settings and the checksummed data-release manifest.
 - `tests/`: preprocessing, actual-data, model, and failure-path tests.
 - `.github/workflows/`: automated testing followed by gated training.
-- `data/raw/`: DVC-managed source data; only pointer and ignore files are committed.
+- `data/raw/`: DVC-managed source data; only the pointer file is committed.
 - `reports/`: compact experiment evidence, the MLflow screenshot, and drift reports.
 - `artifacts/`: local MLflow database, models, and generated training outputs; excluded from Git.
 - `.dvc-remote/`: portable local DVC storage; excluded from Git.

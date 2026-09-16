@@ -22,6 +22,7 @@ def compare_experiments(config: dict, batch_id: str | None = None):
     if runs.empty:
         raise ValueError("No completed experiment batch found. Run python -m src.run_experiments first.")
     batch_id = batch_id or runs.iloc[0]["tags.batch_id"]
+    # A single batch shares its data, split, and preprocessing across configurations.
     runs = runs[runs["tags.batch_id"] == batch_id].copy()
     expected = set(config["experiments"])
     if set(runs["tags.configuration"]) != expected or len(runs) != len(expected):

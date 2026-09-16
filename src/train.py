@@ -92,6 +92,7 @@ def train_run(
             line for line in (ROOT / "requirements.txt").read_text(encoding="utf-8").splitlines()
             if line.startswith(("numpy==", "pandas==", "scikit-learn==", "mlflow=="))
         ]
+        # Ship the custom transformer with the model and allow only its required types.
         mlflow.sklearn.log_model(
             model,
             name="model",

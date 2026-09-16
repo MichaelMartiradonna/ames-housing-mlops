@@ -62,6 +62,7 @@ def load_dataset(config: dict, *, verify_hash: bool = True) -> pd.DataFrame:
 
 
 def split_dataset(frame: pd.DataFrame, config: dict) -> DataSplits:
+    """Reserve test data first, then create validation data without fitting transforms."""
     X = frame.loc[:, feature_names(config)].copy(deep=True)
     # Float columns retain missing values and match the exported MLflow schema.
     numeric = config["data"]["numeric_features"]
@@ -70,6 +71,7 @@ def split_dataset(frame: pd.DataFrame, config: dict) -> DataSplits:
     train_X, test_X, train_y, test_y = train_test_split(
         X, y, test_size=config["split"]["test_size"], random_state=config["random_seed"]
     )
+    # Validation is 20% of all rows, so it takes 25% of the remaining 80%.
     train_X, val_X, train_y, val_y = train_test_split(
         train_X,
         train_y,

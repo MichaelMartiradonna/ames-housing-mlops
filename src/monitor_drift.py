@@ -41,6 +41,7 @@ def run_monitor(config: dict, scenario: str, *, write_reports: bool = True) -> d
         numerical_columns=config["data"]["numeric_features"],
         categorical_columns=config["data"]["categorical_features"],
     )
+    # Explicit methods keep scores interpretable as p-values for every batch size.
     report = Report([
         DataDriftPreset(
             columns=feature_names(config),
@@ -82,6 +83,7 @@ def run_monitor(config: dict, scenario: str, *, write_reports: bool = True) -> d
         "drifted_features": drifted,
         "drift_share": share,
         "drift_share_threshold": threshold,
+        # The project requires an alert only when the share exceeds the threshold.
         "alert": share > threshold,
         "columns": columns,
     }

@@ -58,6 +58,7 @@ jobs:
           python -m pip check
       - name: Restore versioned dataset
         run: |
+          # Jobs use separate machines, so training restores its own verified data.
           python -m src.data_storage bootstrap
           dvc pull
       - name: Train selected configuration and enforce gates

@@ -35,6 +35,7 @@ data:
     Total Bsmt SF: [0, 7000]
     Bedroom AbvGr: [0, 20]
 split:
+  # Both fractions refer to the complete dataset; 60% remains for fitting.
   test_size: 0.2
   validation_size: 0.2
 model:
@@ -67,6 +68,7 @@ tracking:
   artifact_path: artifacts/mlflow
   experiment_name: ames-housing
 evaluation:
+  # Acceptance limits were set before model selection and retained after evaluation.
   primary_metric: mae
   max_mae: 35000
   min_r2: 0.75

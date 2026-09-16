@@ -30,6 +30,7 @@ def main() -> None:
             config, key, splits, run_kind="experiment", batch_id=batch_id, evaluate_test=False
         )
         models[run_id] = model
+    # Rank validation results before any candidate is evaluated on the test set.
     comparison = compare_experiments(config, batch_id)
     winner = comparison.iloc[0]
     test_metrics = evaluate_test_run(models[winner["run_id"]], splits, config, winner["run_id"])
