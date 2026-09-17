@@ -1,0 +1,12 @@
+*
+!Dockerfile
+!app/
+!app/requirements.txt
+!app/streamlit_app.py
+!src/
+!src/*.py
+!configs/
+!configs/*.yaml
+!configs/*.json
+!.streamlit/
+!.streamlit/config.toml

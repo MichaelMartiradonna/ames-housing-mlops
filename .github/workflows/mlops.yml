@@ -1,6 +1,7 @@
 name: MLOps validation
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -71,3 +72,26 @@ jobs:
           name: training-evidence
           path: artifacts/
           retention-days: 30
+
+  container:
+    name: Build and smoke-test app container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - name: Validate Compose configuration
+        run: docker compose config --quiet
+      - name: Build inference image
+        run: docker build -t ames-capstone:ci .
+      - name: Run app and verify actual released model
+        run: |
+          docker run -d --name ames-ci -p 127.0.0.1:8501:8501 -e AMES_LLM_ENABLED=false ames-capstone:ci
+          for attempt in $(seq 1 30); do
+            if curl --fail http://127.0.0.1:8501/_stcore/health; then break; fi
+            sleep 2
+          done
+          curl --fail http://127.0.0.1:8501/_stcore/health
+          docker exec ames-ci python -c "from src.serving import load_serving_model,predict; from src.interface import SAMPLE_FEATURES; m,meta=load_serving_model(); p=predict(m,meta,SAMPLE_FEATURES); assert 10000 < p < 1000000; print('Released model prediction:',p)"
+      - name: Container logs
+        if: always()
+        run: docker logs ames-ci || true

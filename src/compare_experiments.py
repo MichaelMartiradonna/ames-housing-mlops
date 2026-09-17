@@ -35,6 +35,10 @@ def compare_experiments(config: dict, batch_id: str | None = None):
         "metrics.validation_rmse": "validation_rmse",
         "metrics.validation_r2": "validation_r2",
     }
+    for metric in ("mae", "rmse", "r2"):
+        name = f"metrics.test_{metric}"
+        if name in runs:
+            columns[name] = f"test_{metric}"
     result = runs[list(columns)].rename(columns=columns).sort_values(
         ["validation_mae", "configuration"], kind="stable"
     ).reset_index(drop=True)

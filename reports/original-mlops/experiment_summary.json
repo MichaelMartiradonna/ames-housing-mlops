@@ -1,5 +1,5 @@
 {
-  "batch_id": "20260917T162056Z-9d6991ad",
+  "batch_id": "20260916T134012Z-d7d4d092",
   "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
   "source_rows": 2930,
   "source_columns": 82,
@@ -26,13 +26,13 @@
     "test": 586
   },
   "best_configuration": "rf_200_full",
-  "best_run_id": "4de2d93080c849e396f2635627989649",
+  "best_run_id": "442366b05d8647f28820ff59ecb70756",
   "selection_metric": "validation_mae",
-  "best_validation_mae": 16638.58236713798,
+  "best_validation_mae": 16634.130788639686,
   "test_metrics": {
-    "mae": 17764.880126361124,
-    "rmse": 30245.137047725744,
-    "r2": 0.8859042287094702
+    "mae": 17772.875496099463,
+    "rmse": 30214.752456387305,
+    "r2": 0.8861333572473699
   },
   "median_baseline_test_metrics": {
     "mae": 63822.74232081911,

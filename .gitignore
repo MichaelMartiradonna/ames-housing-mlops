@@ -1,4 +1,9 @@
 .venv/
+.cache/
+.streamlit/secrets.toml
+*.sqlite3*
+*.skops
+.tools/
 __pycache__/
 *.py[cod]
 .pytest_cache/

@@ -1,4 +1,4 @@
-"""Run five experiments and evaluate only the validation-selected winner on test data."""
+"""Select on validation, then report held-out test metrics for all frozen candidates."""
 
 import argparse
 import json
@@ -33,7 +33,13 @@ def main() -> None:
     # Rank validation results before any candidate is evaluated on the test set.
     comparison = compare_experiments(config, batch_id)
     winner = comparison.iloc[0]
-    test_metrics = evaluate_test_run(models[winner["run_id"]], splits, config, winner["run_id"])
+    all_test_metrics = {
+        run_id: evaluate_test_run(model, splits, config, run_id, enforce_gate=False)
+        for run_id, model in models.items()
+    }
+    test_metrics = all_test_metrics[winner["run_id"]]
+    from src.evaluate import enforce_performance
+    enforce_performance(test_metrics, config)
     with mlflow.start_run(run_id=winner["run_id"]):
         mlflow.set_tags({"selected": "true", "test_evaluated": "true"})
     baseline = regression_metrics(
@@ -41,6 +47,7 @@ def main() -> None:
     )
     reports = ROOT / "reports"
     reports.mkdir(parents=True, exist_ok=True)
+    comparison = compare_experiments(config, batch_id)
     comparison.to_csv(reports / "experiment_comparison.csv", index=False)
     summary = {
         "batch_id": batch_id,
