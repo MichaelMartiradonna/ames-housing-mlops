@@ -21,7 +21,7 @@
 
 - [x] Final live evaluation (12/12 development cases), 45 tests and browser walkthrough verified.
 - [x] Capstone branch and selected model release published; a fresh download was verified.
-- [ ] GitHub test, training and container checks passed for the capstone.
+- [x] GitHub tests, training and container checks passed: https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840
 - [ ] Author completes guided explanation checkpoints and personal reflection.
 - [ ] Author gives or records the course demo and submits the public repository link.
 

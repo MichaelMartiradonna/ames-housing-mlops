@@ -217,3 +217,7 @@ This extends an earlier Ames MLOps assignment. DVC integrity checks, MLflow, per
 Earlier evidence is preserved under [reports/original-mlops](reports/original-mlops) and the [original write-up](docs/original-mlops-readme.md). Its old counts, metrics, screenshots and workflow URLs describe that version, not verification of the capstone interface.
 
 The final development evaluation passed 12 of 12 cases on the reference local model. This small set informed development and is not independent evidence of general accuracy. The regular test suite has 45 passing tests. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.
+
+A [successful capstone CI run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840) verifies the tests, gated training, Docker build, app health, and actual model inference inside the container. See reports/verification.json for its exact source revision. The reference Windows machine's Docker Desktop engine failed on an internal socket before project startup; no factory reset was performed.
+
+Retraining and export update the local artifact and release manifest. To distribute a newly trained artifact, publish a new model-release version and update the manifest URL/checksum together. Do not point a new checksum at an older release file. If validation selects a different configuration, review that comparison before updating model.selected_experiment in the YAML.

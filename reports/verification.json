@@ -1,15 +1,43 @@
 {
   "verified_at": "2026-09-17",
   "project": "Ames Home-Price Lab capstone",
-  "local_tests": {"command": "pytest tests/ -v", "passed": 45, "failed": 0, "dependency_deprecation_warnings": 10},
-  "live_llm_evaluation": {"report": "reports/interface_evaluation.json", "cases_passed": 12, "cases_total": 12, "independent_accuracy_benchmark": false},
-  "browser_walkthrough": {"complete_description_extracted": true, "confirmed_model_prediction": 159062.25, "generated_explanation_shown": true, "out_of_scope_rejected_after_prediction": true, "prior_result_cleared": true},
-  "model_export": {"run_id": "4de2d93080c849e396f2635627989649", "parity_test_rows": 586, "sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4", "fresh_release_download_and_prediction_verified": true},
+  "local_tests": {
+    "command": "pytest tests/ -v",
+    "passed": 45,
+    "failed": 0,
+    "dependency_deprecation_warnings": 10
+  },
+  "live_llm_evaluation": {
+    "report": "reports/interface_evaluation.json",
+    "cases_passed": 12,
+    "cases_total": 12,
+    "independent_accuracy_benchmark": false
+  },
+  "browser_walkthrough": {
+    "complete_description_extracted": true,
+    "confirmed_model_prediction": 159062.25,
+    "generated_explanation_shown": true,
+    "out_of_scope_rejected_after_prediction": true,
+    "prior_result_cleared": true
+  },
+  "model_export": {
+    "run_id": "4de2d93080c849e396f2635627989649",
+    "parity_test_rows": 586,
+    "sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4",
+    "fresh_release_download_and_prediction_verified": true
+  },
   "api_spend_usd": 0,
   "local_llm": "qwen3:4b via Ollama 0.34.1",
-  "ci_status": "Final capstone CI verification pending; earlier upload-timing failures are not passing evidence.",
+  "ci_status": "passed",
   "docker_desktop_reference_machine": "Engine startup failed on inaccessible internal sailor-ingest.sock; no factory reset performed.",
   "hosted_full_llm_demo": false,
   "author_explanation_checkpoints_completed": false,
-  "course_review_demo_delivered": false
+  "course_review_demo_delivered": false,
+  "ci_evidence": {
+    "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840",
+    "tested_commit": "3e3247d24d586189dd09d4e2f724b2ec99ea53a6",
+    "container_build_health_and_released_model": "passed",
+    "training": "passed",
+    "tests": "passed"
+  }
 }
