@@ -19,8 +19,8 @@
 
 ## Final verification
 
-- [ ] Final live evaluation and browser walkthrough verified.
-- [ ] Capstone branch and selected model release published.
+- [x] Final live evaluation (12/12 development cases), 45 tests and browser walkthrough verified.
+- [x] Capstone branch and selected model release published; a fresh download was verified.
 - [ ] GitHub test, training and container checks passed for the capstone.
 - [ ] Author completes guided explanation checkpoints and personal reflection.
 - [ ] Author gives or records the course demo and submits the public repository link.

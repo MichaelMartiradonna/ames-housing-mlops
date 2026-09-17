@@ -5,6 +5,8 @@ import json
 import time
 from datetime import datetime, timezone
 
+import httpx
+
 from src.config import ROOT
 from src.interface import SAMPLE_FEATURES, SAMPLE_QUERY
 from src.llm import LLMError, LocalLLM
@@ -41,6 +43,14 @@ def main():
     args = parser.parse_args()
     model, metadata = load_serving_model()
     client = LocalLLM()
+    with httpx.Client(timeout=10, trust_env=False) as http:
+        tags_response = http.get(client.settings.base_url + "/api/tags")
+        tags_response.raise_for_status()
+        model_info = next(item for item in tags_response.json()["models"] if item["name"] == client.settings.model)
+        version_response = http.get(client.settings.base_url + "/api/version")
+        version_response.raise_for_status()
+        local_runtime = {"ollama_version": version_response.json()["version"],
+                         "model_digest": model_info["digest"], "details": model_info["details"]}
     results = []
     for case in cases():
         if args.case and case["id"] != args.case:
@@ -74,6 +84,7 @@ def main():
         results.append(record)
         print(f"{case['id']}: {'PASS' if record['passed'] else 'FAIL'} ({record['seconds']}s)", flush=True)
         report = {"evaluated_at": datetime.now(timezone.utc).isoformat(), "model": client.settings.model,
+                  "local_runtime": local_runtime,
                   "provider": "local Ollama", "api_cost_usd": 0, "model_run_id": metadata["run_id"],
                   "passed": sum(result["passed"] for result in results), "total": len(results),
                   "note": "Small development evaluation, not a general accuracy estimate. Offline tests use mock responses separately.",

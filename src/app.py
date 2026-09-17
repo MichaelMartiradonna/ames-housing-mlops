@@ -170,8 +170,8 @@ def main():
                     st.subheader("3. Your historical estimate")
                     st.metric("Predicted sale price", f"${result['price']:,.0f}")
                     if result["explanation"]:
-                        st.write(result["explanation"]["summary"])
-                        st.caption(result["explanation"]["limitation"])
+                        st.markdown(result["explanation"]["summary"].replace("$", r"\$"))
+                        st.caption(result["explanation"]["limitation"].replace("$", r"\$"))
                     elif result["error"]:
                         st.warning(result["error"])
                         st.caption("The price above comes from the trained housing model; a language explanation is unavailable.")

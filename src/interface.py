@@ -78,7 +78,7 @@ class Review:
 
     @property
     def ready(self) -> bool:
-        return self.intent == "estimate" and not self.missing and not self.issues
+        return self.intent == "estimate" and not self.missing and not self.issues and not self.question
 
 
 def validate_features(features: dict, categories: dict) -> Review:
@@ -125,6 +125,14 @@ def review_extraction(extraction: Extraction, message: str, current: dict, categ
             issues.append(f"Please confirm {item.name}; its supporting text could not be verified.")
             continue
         value = item.value
+        if isinstance(value, (int, float)):
+            quote = normalize_quote(item.evidence)
+            numbers = [float(token) for token in re.findall(r"-?(?:\d+(?:\.\d+)?|\.\d+)", quote)]
+            words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+            numbers.extend(index for index, word in enumerate(words) if re.search(r"\b" + word + r"\b", quote))
+            if not any(math.isclose(value, number, rel_tol=1e-9, abs_tol=1e-9) for number in numbers):
+                issues.append(f"Please confirm {LABELS.get(item.name, item.name)}; the extracted number does not match your text.")
+                continue
         if item.name in AREA_FEATURES:
             factors = {"sq_ft": 1, "sq_m": 10.76391041671, "acres": 43560}
         elif item.name == "Lot Frontage":

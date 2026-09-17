@@ -48,6 +48,14 @@ def test_unstated_unit_is_not_inferred_even_when_model_supplies_one(categories):
     assert not result.ready
 
 
+def test_extracted_number_must_match_quoted_input(categories):
+    result = review_extraction(extraction([
+        {"name": "Garage Cars", "value": 2, "unit": "none", "evidence": "3-car garage"},
+    ]), "Correction: a 3-car garage.", SAMPLE_FEATURES, categories)
+    assert "Garage Cars" not in result.features
+    assert not result.ready
+
+
 def test_thousands_separator_variations_preserve_quote_grounding(categories):
     result = review_extraction(extraction([
         {"name": "Lot Area", "value": 9000, "unit": "sq_ft", "evidence": "9000 sq ft lot"},
@@ -84,6 +92,8 @@ def test_ambiguity_and_out_of_scope_block_even_complete_previous_draft(categorie
     for intent in ("clarify", "out_of_scope"):
         result = review_extraction(extraction([], intent, "Please clarify."), "What is it worth today?", SAMPLE_FEATURES, categories)
         assert not result.ready
+    unanswered = review_extraction(extraction([], "estimate", "Which units did you mean?"), "1500", SAMPLE_FEATURES, categories)
+    assert not unanswered.ready
 
 
 def test_duplicate_update_blocks_stale_value(categories):
@@ -111,6 +121,8 @@ def test_client_parsing_contract_and_prompt(categories):
         body = json.loads(request.content)
         assert body["stream"] is False and body["think"] is False
         assert body["format"]["additionalProperties"] is False
+        if body["format"].get("title") == "Scope":
+            return httpx.Response(200, json={"done": True, "message": {"content": '{"kind":"housing"}'}})
         assert "latest_message" in body["messages"][1]["content"]
         return httpx.Response(200, json={"done": True, "message": {"content": json.dumps({
             "intent": "estimate", "updates": [{"name": "Garage Cars", "value": 3, "unit": "none", "evidence": "3-car garage"}], "question": ""
@@ -159,6 +171,8 @@ def test_remote_and_cloud_backends_rejected():
 def test_second_pass_cannot_overwrite_already_valid_fields(categories):
     calls = []
     def handler(request):
+        if json.loads(request.content)["format"].get("title") == "Scope":
+            return httpx.Response(200, json={"done": True, "message": {"content": '{"kind":"housing"}'}})
         calls.append(request)
         updates = ([{"name": "Year Built", "value": 1960, "unit": "none", "evidence": "built in 1960"}]
                    if len(calls) == 1 else [{"name": "Year Built", "value": 2000, "unit": "none", "evidence": "built in 1960"}])
@@ -178,3 +192,16 @@ def test_disabled_language_model_makes_no_request(categories):
     with pytest.raises(LLMError, match="switched off"):
         client.parse("An Ames home", {}, categories)
     assert calls == []
+
+
+def test_scope_gate_blocks_stale_complete_home_before_extraction(categories):
+    calls = []
+    def handler(request):
+        calls.append(request)
+        return httpx.Response(200, json={"done": True, "message": {"content": '{"kind":"out_of_scope"}'}})
+    client = LocalLLM(Settings(), transport=httpx.MockTransport(handler))
+    result = client.parse("What is my Chicago condo worth today?", SAMPLE_FEATURES, categories)
+    assert result.intent == "out_of_scope"
+    assert not result.ready
+    assert "2006" in result.question
+    assert len(calls) == 1

@@ -215,3 +215,5 @@ Development used AI coding assistance. The [guided checkpoints](docs/LEARNING_CH
 This extends an earlier Ames MLOps assignment. DVC integrity checks, MLflow, performance gates, CI and Evidently monitoring were retained. New work adds scaling verification, test metrics for all configurations, the local LLM interface, live evaluation, Streamlit tests, serving/export and Docker.
 
 Earlier evidence is preserved under [reports/original-mlops](reports/original-mlops) and the [original write-up](docs/original-mlops-readme.md). Its old counts, metrics, screenshots and workflow URLs describe that version, not verification of the capstone interface.
+
+The final development evaluation passed 12 of 12 cases on the reference local model. This small set informed development and is not independent evidence of general accuracy. The regular test suite has 45 passing tests. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.

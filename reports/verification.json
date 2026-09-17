@@ -1,66 +1,15 @@
 {
-  "implementation_revision": "2538158",
-  "environment": "Windows, Python 3.12.14; clean Git checkout using the installed project virtual environment",
-  "local_checks": {
-    "dependency_consistency": "pip check passed",
-    "data_bootstrap_from_release_archive": "passed; SHA-256 verified",
-    "dvc_pull_into_empty_checkout": "passed; one data file fetched",
-    "pytest": {"passed": 18, "failed": 0, "warnings": 10},
-    "five_experiment_batch": "passed; selected rf_200_full with matching reference metrics",
-    "programmatic_comparison": "passed",
-    "selected_training_exit_code": 0,
-    "deliberately_impossible_performance_gate_exit_code": 1,
-    "unchanged_control_exit_code": 0,
-    "simulated_drift_exit_code": 1,
-    "evidently_html_rendering": "visually verified",
-    "mlflow_five_run_screenshot": "reports/mlflow_experiments.png"
-  },
-  "final_audit_at": "2026-09-16T13:45:11Z",
-  "public_repository": "https://github.com/MichaelMartiradonna/ames-housing-mlops",
-  "public_checkout": {
-    "revision": "726ffa364bfd2152bf4f6f86a3cd0a3f7080d748",
-    "environment": "Windows, Python 3.12.14; fresh GitHub clone using the installed project virtual environment",
-    "bootstrap": "passed; public HTTPS download without credentials; archive and object SHA-256 verified",
-    "dvc_pull": "passed; one data file fetched into empty checkout",
-    "source_sha256": "6cfe6cb525ba437de428653a1040e2aed7d696640bf75203786a6d7a0e67cfcc",
-    "pytest": {"passed": 18, "failed": 0, "warnings": 10},
-    "unchanged_control_exit_code": 0,
-    "simulated_drift_exit_code": 1
-  },
-  "public_release_download": {
-    "status": "passed",
-    "release_url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/tag/data-v1",
-    "archive_sha256": "5c41c37bfc26b135b13cff86c4b646a0cbcae58c3687bf127c18514b3867dddf"
-  },
-  "github_actions": {
-    "status": "success",
-    "run_url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35103395139",
-    "revision": "4cb7562e70e484df37d4b897336f916cda1e8c9d",
-    "environment": "Ubuntu 24.04, Python 3.12; dependencies installed independently in each job",
-    "test_job": "success",
-    "training_job": "success",
-    "pytest": {"tests": 18, "failures": 0, "errors": 0, "skipped": 0},
-    "test_metrics": {"mae": 17772.875496099463, "rmse": 30214.752456387305, "r2": 0.8861333572473699},
-    "performance_gate": "passed",
-    "artifacts_verified": ["test-results", "training-evidence"],
-    "annotation_counts": {"test_job": 0, "training_job": 0}
-  },
-  "submission_review": {
-    "action_runtime": "Node 24; checkout, setup-python, and upload-artifact use v7",
-    "serializer": "skops==0.15.0, pinned in project and exported model requirements",
-    "serializer_change": "Skops 0.15 was released during verification; explicit trust is limited to the types in this project's own fitted pipeline",
-    "local_pytest": {"passed": 18, "failed": 0, "warnings": 10},
-    "refreshed_experiment_batch": "20260916T134012Z-d7d4d092",
-    "refreshed_experiment_metrics": "unchanged from the original verified batch",
-    "drift_writeup": "reviewed against the simulation code, configuration, and generated reports; all three required questions answered",
-    "neighborhood_simulation": {"rows": 1758, "reassigned_rows": 1406, "reference_NAmes_rows": 273, "current_NAmes_rows": 1449},
-    "remaining_package_warnings": "10 third-party Python deprecation warnings; all tests pass and GitHub check annotations are zero"
-  },
-  "requirements_audit": {
-    "missing_required_components": [],
-    "dataset_and_model_files_in_git_history": false,
-    "relative_documentation_links": "passed",
-    "professional_language_and_decision_comments": "reviewed",
-    "scope": "Complete local and GitHub workflow; future improvements remain documented extensions"
-  }
+  "verified_at": "2026-09-17",
+  "project": "Ames Home-Price Lab capstone",
+  "local_tests": {"command": "pytest tests/ -v", "passed": 45, "failed": 0, "dependency_deprecation_warnings": 10},
+  "live_llm_evaluation": {"report": "reports/interface_evaluation.json", "cases_passed": 12, "cases_total": 12, "independent_accuracy_benchmark": false},
+  "browser_walkthrough": {"complete_description_extracted": true, "confirmed_model_prediction": 159062.25, "generated_explanation_shown": true, "out_of_scope_rejected_after_prediction": true, "prior_result_cleared": true},
+  "model_export": {"run_id": "4de2d93080c849e396f2635627989649", "parity_test_rows": 586, "sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4", "fresh_release_download_and_prediction_verified": true},
+  "api_spend_usd": 0,
+  "local_llm": "qwen3:4b via Ollama 0.34.1",
+  "ci_status": "Final capstone CI verification pending; earlier upload-timing failures are not passing evidence.",
+  "docker_desktop_reference_machine": "Engine startup failed on inaccessible internal sailor-ingest.sock; no factory reset performed.",
+  "hosted_full_llm_demo": false,
+  "author_explanation_checkpoints_completed": false,
+  "course_review_demo_delivered": false
 }
