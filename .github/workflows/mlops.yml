@@ -3,7 +3,7 @@ name: MLOps validation
 on:
   workflow_dispatch:
   push:
-    branches: [main, capstone-llm-interface]
+    branches: [main]
   pull_request:
     branches: [main]
 
