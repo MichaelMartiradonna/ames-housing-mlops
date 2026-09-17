@@ -6,7 +6,8 @@ import httpx
 import pytest
 
 from src.config import ROOT
-from src.interface import Extraction, SAMPLE_FEATURES, review_extraction, validate_features
+from src.interface import (Extraction, OPTIONAL_FEATURES, REQUIRED_FEATURES, SAMPLE_FEATURES,
+                           review_extraction, validate_features)
 from src.llm import LLMError, LocalLLM, Settings
 
 
@@ -27,7 +28,8 @@ def test_partial_extraction_merges_without_changing_input(categories):
     ]), "It has 1,500 sq ft above ground and was built in 1960.", old, categories)
     assert result.features == {"Neighborhood": "NAmes", "Gr Liv Area": 1500., "Year Built": 1960.}
     assert not result.ready
-    assert "Garage Cars" in result.missing
+    assert result.missing == ["Overall Qual"]
+    assert "Garage Cars" in result.defaulted
     assert old == {"Neighborhood": "NAmes"}
 
 
@@ -38,6 +40,16 @@ def test_units_convert_in_code(categories):
     ]), "Lot 0.25 acres, frontage 20 m.", {}, categories)
     assert result.features["Lot Area"] == 10890
     assert result.features["Lot Frontage"] == pytest.approx(65.6167979)
+
+
+def test_exact_category_label_is_normalized_without_fuzzy_guessing(categories):
+    review = review_extraction(extraction([
+        {"name": "Neighborhood", "value": "North Ames", "unit": "none", "evidence": "North Ames"},
+        {"name": "House Style", "value": "unusual house", "unit": "none", "evidence": "unusual house"},
+    ]), "An unusual house in North Ames.", SAMPLE_FEATURES, categories)
+    assert review.features["Neighborhood"] == "NAmes"
+    assert "House Style" not in review.features
+    assert review.issues and not review.ready
 
 
 def test_unstated_unit_is_not_inferred_even_when_model_supplies_one(categories):
@@ -107,6 +119,39 @@ def test_valid_features_do_not_mutate_original(categories):
     before = copy.deepcopy(SAMPLE_FEATURES)
     assert validate_features(SAMPLE_FEATURES, categories).ready
     assert SAMPLE_FEATURES == before
+
+
+def test_core_facts_allow_defaults_without_inventing_features(categories):
+    core = {key: SAMPLE_FEATURES[key] for key in REQUIRED_FEATURES}
+    review = validate_features(core, categories)
+    assert review.ready
+    assert review.features == core
+    assert review.defaulted == list(OPTIONAL_FEATURES)
+
+
+@pytest.mark.parametrize("missing", REQUIRED_FEATURES)
+def test_each_core_fact_is_still_required(categories, missing):
+    review = validate_features({key: value for key, value in SAMPLE_FEATURES.items() if key != missing}, categories)
+    assert not review.ready
+    assert review.missing == [missing]
+
+
+@pytest.mark.parametrize("key,value", [("Garage Cars", -1), ("Full Bath", 1.5),
+                                        ("Lot Area", float("nan")), ("Central Air", "unknown")])
+def test_invalid_optional_fact_is_not_silently_defaulted(categories, key, value):
+    review = validate_features({**SAMPLE_FEATURES, key: value}, categories)
+    assert not review.ready
+    assert review.issues
+    assert key not in review.defaulted
+
+
+def test_zero_is_known_and_none_is_unknown(categories):
+    core = {key: SAMPLE_FEATURES[key] for key in REQUIRED_FEATURES}
+    review = validate_features({**core, "Garage Cars": 0, "Total Bsmt SF": None}, categories)
+    assert review.ready
+    assert review.features["Garage Cars"] == 0
+    assert "Garage Cars" not in review.defaulted
+    assert "Total Bsmt SF" in review.defaulted
 
 
 def response_transport(content, status=200):

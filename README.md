@@ -60,14 +60,16 @@ To use the housing model without Ollama, set `AMES_LLM_ENABLED=false`. This is c
 
 ## Try it
 
-1. Choose **Use example prompt**, then **Read home details**.
-2. Review the extracted fields. Supply missing details in a follow-up or in the form.
+1. Choose **Quick example** (four facts) or **Full example** (all details), then **Read home details**.
+2. Review the extracted fields. Supply missing required details in a follow-up or in the form. Expand **Add optional details** to add what you know and **Review the defaults** to see exactly what unknown details will use.
 3. Check the confirmation box and choose **Confirm & estimate**.
 4. Read the trained model's price and the local language model's explanation.
 5. Try “Actually, it has a 3-car garage.” Review and confirm the changed input.
 6. Try “Estimate the current value of my Chicago condo.” The language layer should explain the scope instead of producing a new estimate.
 
-All 14 fields are required: the app never silently assigns an unknown home's quality, neighborhood, size, or amenities. Quality is an explicit 1–10 material/finish rating; “nice” is not a measured rating. Bedrooms and full bathrooms refer to those above ground.
+Only **above-ground living area, Ames neighborhood, year built, and material/finish quality** are required. The other ten fields are optional. Missing optional values use the saved model's training medians or most frequent categories, displayed before confirmation and alongside the result. They are not facts inferred about this home. Garage capacity and basement area are useful first additions. **Zero means none; blank means unknown.** Invalid supplied values still block prediction. Any field edit clears the prior estimate and confirmation.
+
+Quality is an explicit 1–10 material/finish rating; “nice” is not a measured rating. Bedrooms and full bathrooms refer to those above ground. More details can refine the estimate, but do not guarantee a more accurate result for each home.
 
 A prepared success-and-edge-case walkthrough is in [docs/DEMO.md](docs/DEMO.md).
 
@@ -92,10 +94,11 @@ flowchart LR
 - `src/train.py`, `src/run_experiments.py`, `src/compare_experiments.py`: training, tracking and model selection.
 - `src/export_model.py`: exports the actual MLflow winner and checks parity on all test rows.
 - `src/evaluate_interface.py`: live language evaluation, separate from offline tests.
+- `src/evaluate_optional_inputs.py`: reproducible validation-only comparison of missing-input policies.
 
-Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Units must occur in the supporting quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block prediction and remove stale values. Missing or ambiguous inputs require clarification.
+Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Exact known category display labels are converted to their dataset codes; there is no fuzzy category guessing. Units must occur in the supporting quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block readiness and remove stale values. Missing required facts or ambiguous supplied facts require clarification; absent optional facts do not. The bounded second extraction pass only contributes missing fields and cannot overwrite accepted values.
 
-These checks cannot prove semantic correctness of every extraction. The user therefore confirms the full form. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate. The UI renders the historical scope and statistical caveat from trusted metadata; it does not rely on the language model's wording of prediction error.
+These checks cannot prove semantic correctness of every extraction. The user therefore confirms the supplied details and listed defaults. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate. The UI renders the historical scope and statistical caveat from trusted metadata; it does not rely on the language model's wording of prediction error. Partial-input explanations do not receive the full-input test MAE as their accuracy claim.
 
 ## Dataset and preprocessing
 
@@ -154,6 +157,18 @@ All five configurations and their test metrics are in [reports/experiment_compar
 
 [reports/interface_evaluation.json](reports/interface_evaluation.json) records actual local-model evaluation. The small development set covers complete descriptions, unit conversion, follow-ups, missing data, ambiguity, contradictions, invalid inputs and scope. It is **not a general accuracy benchmark**: prompts and validation were improved using these cases.
 
+### Optional-input tradeoff
+
+The unchanged released model was evaluated on the same **586 validation homes**, masking optional columns and using its existing training-fitted imputers. No retraining or additional test-set evaluation was performed:
+
+- All available inputs: validation MAE **$16,639**, RMSE **$24,630**, R² **0.889**.
+- Four required inputs only: validation MAE **$26,783**, RMSE **$37,821**, R² **0.739**.
+- Four plus garage capacity and basement area: validation MAE **$19,861**, RMSE **$27,572**, R² **0.861**.
+
+Four required fields are a usability choice for a clearly labeled rough estimate. Their validation R² is below the original full-input performance gate of 0.75; we do not claim partial-input mode passes that gate. The original full-input test metrics and trained model remain unchanged. The UI labels the test-error metric accordingly and separates supplied details from defaults.
+
+This development comparison informed the input policy. It is not independent test performance, a per-home uncertainty interval, or evidence that every added detail improves accuracy. Simulated missingness assumes the retained facts are correct; actual users may make errors. The full six-policy comparison and exact fitted defaults are in [reports/optional_input_evaluation.json](reports/optional_input_evaluation.json). Reproduce it with `python -m src.evaluate_optional_inputs` after restoring the dataset.
+
 ## Testing and CI
 
 ~~~bash
@@ -168,6 +183,8 @@ The second requires the real local model and evaluates actual extraction, housin
 GitHub Actions runs the tests, gated training, and a container build with health and actual released-model prediction checks. See the [workflow](.github/workflows/mlops.yml) and [verification checklist](CHECKLIST.md) for current status.
 
 ## Docker
+
+The current app image was built and verified locally on Docker Desktop 4.91.0 / Engine 29.8.0. The container's health check passed, the full example returned **$159,062.25**, and the four-field example returned **$160,000.625**, matching native inference. The browser displayed **$160,001** after confirming the four inputs and ten defaults. See the [step-by-step Docker walkthrough](docs/DOCKER_WALKTHROUGH.md) and [verification evidence](reports/docker_verification.json). This check used manual mode; the full Ollama Compose stack remains a separate, unverified deployment path.
 
 Build and launch manual mode:
 
@@ -216,8 +233,8 @@ This extends an earlier Ames MLOps assignment. DVC integrity checks, MLflow, per
 
 Earlier evidence is preserved under [reports/original-mlops](reports/original-mlops) and the [original write-up](docs/original-mlops-readme.md). Its old counts, metrics, screenshots and workflow URLs describe that version, not verification of the capstone interface.
 
-The final development evaluation passed 12 of 12 cases on the reference local model. This small set informed development and is not independent evidence of general accuracy. The regular test suite has 45 passing tests. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.
+The current version has **61 passing automated tests** and **16/16 passing live language development cases**. The suite covers partial-input prediction, exact default parity, invalid optional fields, zero versus unknown, and confirmation-reset checks. Current verification is recorded in reports/verification.json. These development cases informed implementation and are not independent evidence of general language accuracy. The original required-14-field version's language report is preserved in reports/development/required-14-interface-evaluation.json. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.
 
-A [successful capstone CI run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840) verifies the tests, gated training, Docker build, app health, and actual model inference inside the container. See reports/verification.json for its exact source revision. The reference Windows machine's Docker Desktop engine failed on an internal socket before project startup; no factory reset was performed.
+A [successful optional-input CI run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912) verifies all 61 tests, gated training, Docker build, app health, and actual model inference inside the container. See reports/verification.json for the tested source revision and separate local evidence. The earlier Windows Docker startup issue is no longer present; the current app has also been built and verified locally in a Linux container. Earlier capstone CI evidence remains in reports/development/required-14-verification.json.
 
 Retraining and export update the local artifact and release manifest. To distribute a newly trained artifact, publish a new model-release version and update the manifest URL/checksum together. Do not point a new checksum at an older release file. If validation selects a different configuration, review that comparison before updating model.selected_experiment in the YAML.

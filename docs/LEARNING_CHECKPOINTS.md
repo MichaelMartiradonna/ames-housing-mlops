@@ -10,6 +10,7 @@ Explain the target and 14 inputs without opening the code. Then open `configs/mo
 - Why retain a validation-selected model even when another candidate has lower test error?
 - What does an MAE of about $17,765 mean? What does it not tell you about one house?
 - Why does a Random Forest not need scaling, even though this project includes it?
+- Why require four facts and show defaults for ten others? How do the separate validation results differ from the published full-input test error?
 
 ## 2. Follow one request — about 10 minutes
 

@@ -12,9 +12,11 @@ Five configurations were trained with training-fitted preprocessing. Selection u
 
 Current evidence is linked from [CHECKLIST.md](CHECKLIST.md), [the experiment comparison](reports/experiment_comparison.csv), and [the live language evaluation](reports/interface_evaluation.json). Unit tests of transport use synthetic responses; live evaluation uses the real downloaded model. These are deliberately distinguished.
 
-Docker packaging includes a non-root app image and optional local Ollama Compose stack. Docker Desktop on the reference Windows machine failed before loading this project because its internal sailor-ingest.sock could not be accessed. Container verification is therefore also performed on GitHub's Ubuntu runner. No Docker factory reset was performed.
+Docker packaging includes a non-root app image and optional local Ollama Compose stack. The earlier Windows startup issue is no longer present. On Docker Desktop 4.91.0 / Engine 29.8.0, the current image built successfully, became healthy on localhost:8502, and produced matching full-input and four-field predictions. The four-field result was also verified through the browser. This local verification used manual mode; the full Ollama Compose stack has not been run end to end. Source hashes and results are in reports/docker_verification.json.
 
 ## Scope
+
+The revised form requires four core facts and accepts ten optional details. It previews the exact training-fitted defaults before confirmation and marks estimates that use them. On the same 586 validation homes, masking all ten optional fields raises MAE from $16,639 to $26,783; adding garage capacity and basement area reduces it to $19,861. This is a development comparison, not a new test benchmark. Four-only R² is 0.739, below the original full-input 0.75 gate, so this mode is presented as a rough estimate. The model and its original full-input test evidence are unchanged. See reports/optional_input_evaluation.json.
 
 This is a historical educational model, not a valuation service. The app has no paid model fallback, ad targeting, CRM, trainer logic, current-price feed, or commercial deployment infrastructure.
 

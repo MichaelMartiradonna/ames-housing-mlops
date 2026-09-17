@@ -62,9 +62,20 @@ def load_serving_model(directory: Path = MODEL_DIR):
 def predict(model, metadata: dict, features: dict) -> float:
     review = validate_features(features, metadata["categories"])
     if not review.ready:
-        raise ValueError("Complete and validate all home details before estimating.")
+        raise ValueError("Complete the four required details and correct any invalid values before estimating.")
     frame = pd.DataFrame([review.features], columns=feature_names(load_config()))
     prediction = np.asarray(model.predict(frame))
     if prediction.shape != (1,) or not np.isfinite(prediction).all() or prediction[0] <= 0:
         raise ValueError("The model did not return a valid price.")
     return float(prediction[0])
+
+
+def training_defaults(model) -> dict:
+    """Read the exact values used by the saved, training-fitted imputers."""
+    columns = model.named_steps["preprocess"].named_steps["columns"]
+    defaults = {}
+    for name, transformer, features in columns.transformers_:
+        if name in {"numeric", "categorical"}:
+            for key, value in zip(features, transformer.named_steps["impute"].statistics_, strict=True):
+                defaults[key] = float(value) if name == "numeric" else str(value)
+    return defaults

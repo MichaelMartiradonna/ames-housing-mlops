@@ -1,0 +1,188 @@
+{
+  "evaluated_at": "2026-09-17T18:25:21.768053+00:00",
+  "model_run_id": "4de2d93080c849e396f2635627989649",
+  "model_sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4",
+  "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
+  "split": "validation",
+  "rows": 586,
+  "random_seed": 42,
+  "retrained": false,
+  "test_set_evaluated": false,
+  "method": "Mask entire optional columns on the same validation homes; use unchanged training-fitted imputers and model.",
+  "selected_policy": "required_four",
+  "decision": "Four core facts enable a clearly labeled rough estimate. Recommend garage and basement as optional refinements. Preserve the trained model and its original full-input performance gates.",
+  "limitations": "Development comparison used to choose the input policy, not an independent test benchmark or per-home uncertainty interval. Simulated missingness and correct core values do not establish real-user accuracy. More supplied fields need not improve every prediction. Four-only validation R2 is below the original full-input 0.75 gate; the partial-input mode is not claimed to pass that gate.",
+  "training_defaults": {
+    "Lot Area": 9375.0,
+    "Lot Frontage": 68.0,
+    "Gr Liv Area": 1452.5,
+    "Overall Qual": 6.0,
+    "Year Built": 1972.0,
+    "Full Bath": 2.0,
+    "Garage Cars": 2.0,
+    "Total Bsmt SF": 988.0,
+    "Bedroom AbvGr": 3.0,
+    "Neighborhood": "NAmes",
+    "House Style": "1Story",
+    "Bldg Type": "1Fam",
+    "MS Zoning": "RL",
+    "Central Air": "Y"
+  },
+  "results": [
+    {
+      "policy": "all_available",
+      "supplied_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Gr Liv Area",
+        "Overall Qual",
+        "Year Built",
+        "Full Bath",
+        "Garage Cars",
+        "Total Bsmt SF",
+        "Bedroom AbvGr",
+        "Neighborhood",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "masked_features": [],
+      "validation_metrics": {
+        "mae": 16638.58236713798,
+        "rmse": 24629.84827848991,
+        "r2": 0.8894039123763477
+      }
+    },
+    {
+      "policy": "required_four",
+      "supplied_features": [
+        "Gr Liv Area",
+        "Neighborhood",
+        "Year Built",
+        "Overall Qual"
+      ],
+      "masked_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Full Bath",
+        "Garage Cars",
+        "Total Bsmt SF",
+        "Bedroom AbvGr",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "validation_metrics": {
+        "mae": 26783.066077929467,
+        "rmse": 37820.54328600852,
+        "r2": 0.7392214795221264
+      }
+    },
+    {
+      "policy": "four_plus_garage",
+      "supplied_features": [
+        "Gr Liv Area",
+        "Neighborhood",
+        "Year Built",
+        "Overall Qual",
+        "Garage Cars"
+      ],
+      "masked_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Full Bath",
+        "Total Bsmt SF",
+        "Bedroom AbvGr",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "validation_metrics": {
+        "mae": 23918.333734357224,
+        "rmse": 34599.79792469112,
+        "r2": 0.781745395115386
+      }
+    },
+    {
+      "policy": "four_plus_basement",
+      "supplied_features": [
+        "Gr Liv Area",
+        "Neighborhood",
+        "Year Built",
+        "Overall Qual",
+        "Total Bsmt SF"
+      ],
+      "masked_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Full Bath",
+        "Garage Cars",
+        "Bedroom AbvGr",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "validation_metrics": {
+        "mae": 23433.351346700798,
+        "rmse": 31809.58668176503,
+        "r2": 0.8155271985768358
+      }
+    },
+    {
+      "policy": "four_plus_garage_and_basement",
+      "supplied_features": [
+        "Gr Liv Area",
+        "Neighborhood",
+        "Year Built",
+        "Overall Qual",
+        "Garage Cars",
+        "Total Bsmt SF"
+      ],
+      "masked_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Full Bath",
+        "Bedroom AbvGr",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "validation_metrics": {
+        "mae": 19861.135447952216,
+        "rmse": 27572.477510548168,
+        "r2": 0.8613985182847193
+      }
+    },
+    {
+      "policy": "three_without_quality",
+      "supplied_features": [
+        "Gr Liv Area",
+        "Neighborhood",
+        "Year Built"
+      ],
+      "masked_features": [
+        "Lot Area",
+        "Lot Frontage",
+        "Overall Qual",
+        "Full Bath",
+        "Garage Cars",
+        "Total Bsmt SF",
+        "Bedroom AbvGr",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "validation_metrics": {
+        "mae": 36206.73705631399,
+        "rmse": 53121.43265889894,
+        "r2": 0.4855349822429582
+      }
+    }
+  ]
+}

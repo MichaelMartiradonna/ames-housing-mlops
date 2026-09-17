@@ -8,13 +8,21 @@ from datetime import datetime, timezone
 import httpx
 
 from src.config import ROOT
-from src.interface import SAMPLE_FEATURES, SAMPLE_QUERY
+from src.interface import QUICK_QUERY, REQUIRED_FEATURES, SAMPLE_FEATURES, SAMPLE_QUERY
 from src.llm import LLMError, LocalLLM
 from src.serving import load_serving_model, predict
 
 
 def cases():
+    core = {key: SAMPLE_FEATURES[key] for key in REQUIRED_FEATURES}
     return [
+        {"id": "quick_estimate", "message": QUICK_QUERY, "expected": core, "ready": True},
+        {"id": "optional_follow_up", "message": "Add a 2-car garage and 1,000 sq ft of basement.",
+         "current": core, "expected": {**core, "Garage Cars": 2., "Total Bsmt SF": 1000.}, "ready": True},
+        {"id": "invalid_optional", "message": "Correction: garage capacity is -1 cars.", "current": core,
+         "expected_absent": ["Garage Cars"], "ready": False},
+        {"id": "zero_optional", "message": "The garage capacity is 0 cars and basement area is 0 sq ft.",
+         "current": core, "expected": {**core, "Garage Cars": 0., "Total Bsmt SF": 0.}, "ready": True},
         {"id": "complete", "message": SAMPLE_QUERY, "expected": SAMPLE_FEATURES, "ready": True},
         {"id": "metric_units", "message": SAMPLE_QUERY.replace("9,000 sq ft lot", "0.25 acre lot").replace("75 ft of street frontage", "20 m of street frontage"),
          "expected": {**SAMPLE_FEATURES, "Lot Area": 10890., "Lot Frontage": 65.6167979}, "ready": True},
@@ -71,10 +79,11 @@ def main():
                 )
             checks["ambiguous_or_invalid_not_used"] = all(key not in review.features for key in case.get("expected_absent", []))
             record.update(features=review.features, intent=review.intent, issues=review.issues,
-                          missing=review.missing, question=review.question, parse_usage=client.last_usage)
+                          missing=review.missing, defaulted=review.defaulted,
+                          question=review.question, parse_usage=client.last_usage)
             if review.ready:
                 price = predict(model, metadata, review.features)
-                explanation = client.explain(price, metadata)
+                explanation = client.explain(price, metadata, review.defaulted)
                 record.update(prediction=price, explanation=explanation.model_dump(), explanation_usage=client.last_usage)
                 checks["explanation_matches_prediction"] = explanation.estimate_usd == round(price)
             record.update(checks=checks, passed=all(checks.values()))
