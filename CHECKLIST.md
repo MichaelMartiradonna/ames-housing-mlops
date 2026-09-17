@@ -34,7 +34,7 @@
 - [x] Browser walkthrough: four facts extracted, exact defaults reviewed, real estimate and explanation displayed.
 - [x] User reviews the local changes before finalization.
 - [x] Local Docker engine, current app build, health, actual model predictions, and browser manual workflow verified.
-- [ ] Publish the reviewed changes and run GitHub checks for the updated version.
+- [x] Publish the reviewed changes in [PR #2](https://github.com/MichaelMartiradonna/ames-housing-mlops/pull/2); [GitHub tests, training and container checks passed](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912) for the updated application.
 
 The earlier Windows Docker startup issue is no longer present. Local verification on Docker Desktop 4.91.0 / Engine 29.8.0 passed for the current app in manual mode. See [reports/docker_verification.json](reports/docker_verification.json) for source hashes and results, and [docs/DOCKER_WALKTHROUGH.md](docs/DOCKER_WALKTHROUGH.md) to repeat the steps. The full Ollama Compose stack remains unverified; the native app provides the tested natural-language workflow.
 

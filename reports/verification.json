@@ -31,20 +31,21 @@
   },
   "api_spend_usd": 0,
   "local_llm": "qwen3:4b via Ollama 0.34.1",
-  "ci_status": "Previous capstone passed; CI has not run on these local optional-input changes.",
+  "ci_status": "passed",
   "docker_desktop_reference_machine": "Passed: Docker Desktop 4.91.0, Engine 29.8.0, current app image built locally; localhost:8502 healthy; actual full and four-field predictions match native results; browser manual prediction verified. Earlier startup problem is no longer present. Full Compose stack not tested.",
   "hosted_full_llm_demo": false,
   "author_explanation_checkpoints_completed": false,
   "course_review_demo_delivered": false,
   "ci_evidence": {
-    "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840",
-    "tested_commit": "3e3247d24d586189dd09d4e2f724b2ec99ea53a6",
+    "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912",
+    "tested_commit": "6eba212ba2094ecb33c9dbfff47ddecdc6ca1400",
     "container_build_health_and_released_model": "passed",
     "training": "passed",
     "tests": "passed",
-    "scope": "Original capstone revision, before optional-input changes."
+    "test_count": 61,
+    "scope": "Approved optional-input application and tests; subsequent documentation records this completed run."
   },
-  "revision": "Reviewed local optional-input changes on flexible-home-inputs; based on 3756ec452d8e06938f93f83fb42a9ae7b5e7f130; Docker verified locally; not pushed or merged.",
+  "revision": "Approved optional-input application published in PR #2. Tested application revision: 6eba212ba2094ecb33c9dbfff47ddecdc6ca1400. Local Docker verification identifies its application files by SHA-256.",
   "optional_input_evaluation": {
     "report": "reports/optional_input_evaluation.json",
     "validation_rows": 586,
@@ -57,5 +58,6 @@
     "partial_input_mode_claimed_to_pass_full_input_gate": false
   },
   "user_review_of_optional_inputs_completed": true,
-  "docker_local_evidence": "reports/docker_verification.json"
+  "docker_local_evidence": "reports/docker_verification.json",
+  "pull_request": "https://github.com/MichaelMartiradonna/ames-housing-mlops/pull/2"
 }
