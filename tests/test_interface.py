@@ -154,3 +154,27 @@ def test_remote_and_cloud_backends_rejected():
         LocalLLM(Settings(base_url="https://example.com"))
     with pytest.raises(LLMError, match="cloud"):
         LocalLLM(Settings(model="qwen3.5:cloud"))
+
+
+def test_second_pass_cannot_overwrite_already_valid_fields(categories):
+    calls = []
+    def handler(request):
+        calls.append(request)
+        updates = ([{"name": "Year Built", "value": 1960, "unit": "none", "evidence": "built in 1960"}]
+                   if len(calls) == 1 else [{"name": "Year Built", "value": 2000, "unit": "none", "evidence": "built in 1960"}])
+        return httpx.Response(200, json={"done": True, "message": {"content": json.dumps({
+            "intent": "estimate", "updates": updates, "question": ""
+        })}})
+    client = LocalLLM(Settings(), transport=httpx.MockTransport(handler))
+    result = client.parse("It was built in 1960.", {}, categories)
+    assert len(calls) == 2
+    assert result.features["Year Built"] == 1960
+    assert not result.ready
+
+
+def test_disabled_language_model_makes_no_request(categories):
+    calls = []
+    client = LocalLLM(Settings(enabled=False), transport=httpx.MockTransport(lambda req: calls.append(req)))
+    with pytest.raises(LLMError, match="switched off"):
+        client.parse("An Ames home", {}, categories)
+    assert calls == []

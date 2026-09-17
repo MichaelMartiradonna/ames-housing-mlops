@@ -1,6 +1,7 @@
 """Export the actual MLflow winner, preserving its provenance and prediction parity."""
 
 import json
+import zipfile
 from datetime import datetime, timezone
 
 import mlflow.sklearn
@@ -22,7 +23,7 @@ def main():
     splits = split_dataset(load_dataset(config), config)
     MODEL_DIR.mkdir(parents=True, exist_ok=True)
     path = MODEL_DIR / "model.skops"
-    sio.dump(model, path)
+    sio.dump(model, path, compression=zipfile.ZIP_DEFLATED, compresslevel=6)
     reloaded = sio.load(path, trusted=list(TRUSTED_TYPES))
     np.testing.assert_allclose(model.predict(splits.X_test), reloaded.predict(splits.X_test), rtol=0, atol=1e-8)
     metadata = {

@@ -33,7 +33,7 @@ python -m pip install -r app/requirements.txt
 Copy `.env.example` to `.env` (`Copy-Item .env.example .env` on Windows or `cp .env.example .env` on macOS/Linux). Install [Ollama](https://ollama.com/download), start it, and download the local model:
 
 ~~~bash
-ollama pull qwen3.5:4b
+ollama pull qwen3:4b
 ~~~
 
 On Windows, an optional project-contained setup is provided:
@@ -41,10 +41,10 @@ On Windows, an optional project-contained setup is provided:
 ~~~powershell
 python scripts/setup_local_llm.py
 .\scripts\start_local_llm.ps1
-.\.tools\ollama\ollama.exe pull qwen3.5:4b
+.\.tools\ollama\ollama.exe pull qwen3:4b
 ~~~
 
-The portable setup verifies the official Ollama 0.34.1 archive before extracting it. Downloads are approximately 1.5 GB for the runtime plus 3.4 GB for the model. It creates Ollama's usual local identity file in the user's `.ollama` directory; model weights stay in this project's ignored `.tools/models`. Do not start two servers on the same port.
+The portable setup verifies the official Ollama 0.34.1 archive before extracting it. Downloads are approximately 1.5 GB for the runtime plus 2.5 GB for the model. It creates Ollama's usual local identity file in the user's `.ollama` directory; model weights stay in this project's ignored `.tools/models`. Do not start two servers on the same port.
 
 Start the interface:
 
@@ -52,7 +52,7 @@ Start the interface:
 streamlit run app/streamlit_app.py
 ~~~
 
-Open http://localhost:8501. On first use, the app downloads the **35.5 MB selected housing model** from its release, checks its SHA-256, and loads its complete preprocessing pipeline. Training data and MLflow are not needed to use that exported model.
+Open http://localhost:8501. On first use, the app downloads the **6.2 MB selected housing model** from its release, checks its SHA-256, and loads its complete preprocessing pipeline. Training data and MLflow are not needed to use that exported model.
 
 Local inference needs **no API key, payment card, or paid provider**. The app permits only local Ollama addresses and has no paid fallback. The reference machine has a 6 GB NVIDIA GPU. CPU inference is supported but can be considerably slower; the first request also includes model loading. Settings are documented in `.env.example`; credentials are never committed.
 

@@ -19,14 +19,14 @@ services:
     depends_on:
       ollama:
         condition: service_healthy
-    command: ["pull", "qwen3.5:4b"]
+    command: ["pull", "qwen3:4b"]
   app:
     build: .
     ports:
       - "127.0.0.1:8501:8501"
     environment:
       OLLAMA_BASE_URL: http://ollama:11434
-      OLLAMA_MODEL: qwen3.5:4b
+      OLLAMA_MODEL: qwen3:4b
       AMES_LLM_ENABLED: "true"
       AMES_LLM_TIMEOUT_SECONDS: "300"
     depends_on:

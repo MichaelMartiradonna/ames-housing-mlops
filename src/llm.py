@@ -27,7 +27,7 @@ class Explanation(BaseModel):
 @dataclass(frozen=True)
 class Settings:
     base_url: str = "http://127.0.0.1:11434"
-    model: str = "qwen3.5:4b"
+    model: str = "qwen3:4b"
     enabled: bool = True
     timeout: float = 180
 

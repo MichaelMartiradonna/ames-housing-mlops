@@ -3,10 +3,10 @@
   "run_id": "4de2d93080c849e396f2635627989649",
   "configuration": "rf_200_full",
   "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
-  "sha256": "e62c3707554e06b03f80806872ca25afec9da0cfec49503d1da49f130413d54d",
-  "bytes": 35499843,
+  "sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4",
+  "bytes": 6214958,
   "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/download/capstone-model-v1/model.skops",
-  "exported_at": "2026-09-17T16:25:39.608238+00:00",
+  "exported_at": "2026-09-17T16:59:14.351721+00:00",
   "categories": {
     "Neighborhood": [
       "Blmngtn",
