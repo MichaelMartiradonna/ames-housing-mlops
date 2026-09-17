@@ -1,211 +1,217 @@
-# Ames Housing MLOps
+# Ames Home-Price Lab
 
-[![MLOps validation](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml/badge.svg)](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml)
+A capstone application that turns an ordinary home description into a **reviewable, model-backed historical price estimate**. A local language model extracts the details; the selected Random Forest predicts the sale price; the language model explains that actual result.
 
-A reproducible machine-learning workflow for estimating historical home sale prices in Ames, Iowa. The project combines **Git and DVC**, **MLflow**, **pytest**, **GitHub Actions**, and **Evidently** around a compact random-forest model.
+This educational tool explores Ames, Iowa sales from **2006–2010**. It is not a current appraisal or an investment tool.
 
-The objective is reliable model development: identifiable data versions, comparable experiments, explicit acceptance gates, and observable changes in incoming features. This repository demonstrates those practices locally and in CI; it does not operate a live valuation service.
+[![Validation](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml/badge.svg)](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml)
 
-## Verified results
+## Run the app
 
-- Selected model: 200-tree random forest, unlimited depth, minimum leaf size 1.
-- Held-out test results: **MAE $17,773; RMSE $30,215; R² 0.886**, passing both planned acceptance gates.
-- **18 passing tests**, including saved-model reload with missing values and an unseen category.
-- [Successful GitHub Actions run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35103395139): tests and gated training passed on separate Ubuntu runners, with zero workflow annotations.
-- Drift control: **0 of 14** predictors; simulated shift: **5 of 14 (35.71%)**, correctly returning an alert above 30%.
+Use Python 3.12. Create and activate an environment:
 
-Full results and their limits are documented in [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md).
-Verification status is recorded in [reports/verification.json](reports/verification.json) and [CHECKLIST.md](CHECKLIST.md).
+Windows:
 
-## Dataset and prediction task
-
-The [original Ames Housing dataset](https://jse.amstat.org/v19n3/decock/AmesHousing.txt) describes **2,930 property sales from 2006–2010**. It contains 82 columns, including identifiers and the `SalePrice` target. The model uses 14 predictors:
-
-- **Numeric:** lot area, lot frontage, above-ground living area, overall quality, year built, full bathrooms, garage capacity, basement area, and bedrooms.
-- **Categorical:** neighborhood, house style, building type, zoning, and central air.
-
-Lot frontage is missing for 490 records; garage capacity and basement area each have one missing value. Existing missingness provides a realistic preprocessing requirement. Identifiers and the sale price are excluded from predictors.
-
-Ames was selected because it provides a documented regression target, mixed feature types, and manageable preparation. This keeps the work focused on the surrounding MLOps workflow. The historical data supports a reproducibility demonstration, not current market appraisals or forecasts for other locations.
-
-Reference: Dean De Cock, [“Ames, Iowa: Alternative to the Boston Housing Data as an End of Semester Regression Project”](https://jse.amstat.org/v19n3/decock.pdf), *Journal of Statistics Education*, 19(3), 2011. The dataset is attributed to its original source; no ownership of the source data is claimed.
-
-## Workflow and repository layout
-
-```mermaid
-flowchart LR
-    A[Versioned raw data: DVC] --> B[Fixed train / validation / test split]
-    B --> C[Train-fitted preprocessing and random forest]
-    C --> D[Five MLflow experiments]
-    D --> E[Select by validation MAE]
-    E --> F[Held-out test performance gates]
-    B --> G[Reference features]
-    G --> H[Evidently drift report]
-    I[Simulated production features] --> H
-```
-
-- `src/`: configuration, data validation/storage, preprocessing, training, evaluation, experiment comparison, and monitoring.
-- `configs/`: model settings and the checksummed data-release manifest.
-- `tests/`: preprocessing, actual-data, model, and failure-path tests.
-- `.github/workflows/`: automated testing followed by gated training.
-- `data/raw/`: DVC-managed source data; only the pointer file is committed.
-- `reports/`: compact experiment evidence, the MLflow screenshot, and drift reports.
-- `artifacts/`: local MLflow database, models, and generated training outputs; excluded from Git.
-- `.dvc-remote/`: portable local DVC storage; excluded from Git.
-
-See [PROJECT_SUMMARY.md](PROJECT_SUMMARY.md) for decisions, findings, limitations, and prioritized future improvements; [CHECKLIST.md](CHECKLIST.md) records completion evidence.
-
-## Setup
-
-Prerequisites: **Python 3.12** and Git. Run commands from the repository root.
-
-```bash
-git clone https://github.com/MichaelMartiradonna/ames-housing-mlops.git
-cd ames-housing-mlops
-```
-
-Create a virtual environment:
-
-**Windows PowerShell**
-
-```powershell
+~~~powershell
 py -3.12 -m venv .venv
 .\.venv\Scripts\Activate.ps1
-```
+~~~
 
-**macOS / Linux**
+macOS / Linux:
 
-```bash
+~~~bash
 python3.12 -m venv .venv
 source .venv/bin/activate
-```
+~~~
 
-Install the pinned project dependencies and restore the data:
+Install the smaller inference environment:
 
-```bash
+~~~bash
+python -m pip install -r app/requirements.txt
+~~~
+
+Copy `.env.example` to `.env` (`Copy-Item .env.example .env` on Windows or `cp .env.example .env` on macOS/Linux). Install [Ollama](https://ollama.com/download), start it, and download the local model:
+
+~~~bash
+ollama pull qwen3.5:4b
+~~~
+
+On Windows, an optional project-contained setup is provided:
+
+~~~powershell
+python scripts/setup_local_llm.py
+.\scripts\start_local_llm.ps1
+.\.tools\ollama\ollama.exe pull qwen3.5:4b
+~~~
+
+The portable setup verifies the official Ollama 0.34.1 archive before extracting it. Downloads are approximately 1.5 GB for the runtime plus 3.4 GB for the model. It creates Ollama's usual local identity file in the user's `.ollama` directory; model weights stay in this project's ignored `.tools/models`. Do not start two servers on the same port.
+
+Start the interface:
+
+~~~bash
+streamlit run app/streamlit_app.py
+~~~
+
+Open http://localhost:8501. On first use, the app downloads the **35.5 MB selected housing model** from its release, checks its SHA-256, and loads its complete preprocessing pipeline. Training data and MLflow are not needed to use that exported model.
+
+Local inference needs **no API key, payment card, or paid provider**. The app permits only local Ollama addresses and has no paid fallback. The reference machine has a 6 GB NVIDIA GPU. CPU inference is supported but can be considerably slower; the first request also includes model loading. Settings are documented in `.env.example`; credentials are never committed.
+
+To use the housing model without Ollama, set `AMES_LLM_ENABLED=false`. This is clearly labeled **manual mode** and does not fulfill the natural-language demo by itself.
+
+## Try it
+
+1. Choose **Use example prompt**, then **Read home details**.
+2. Review the extracted fields. Supply missing details in a follow-up or in the form.
+3. Check the confirmation box and choose **Confirm & estimate**.
+4. Read the trained model's price and the local language model's explanation.
+5. Try “Actually, it has a 3-car garage.” Review and confirm the changed input.
+6. Try “Estimate the current value of my Chicago condo.” The language layer should explain the scope instead of producing a new estimate.
+
+All 14 fields are required: the app never silently assigns an unknown home's quality, neighborhood, size, or amenities. Quality is an explicit 1–10 material/finish rating; “nice” is not a measured rating. Bedrooms and full bathrooms refer to those above ground.
+
+A prepared success-and-edge-case walkthrough is in [docs/DEMO.md](docs/DEMO.md).
+
+## Architecture
+
+~~~mermaid
+flowchart LR
+    A[Home description] --> B[Local Qwen via Ollama]
+    B --> C[Structured extraction and evidence]
+    C --> D[Units, ranges, categories, completeness]
+    D --> E[User reviews and confirms]
+    E --> F[Saved preprocessing + Random Forest]
+    F --> G[Actual historical price estimate]
+    G --> H[Local language explanation]
+    H --> I[Streamlit result and limitations]
+~~~
+
+- `src/interface.py`: feature contract, unit conversion, validation, conversation updates.
+- `src/llm.py`: local requests, schema output, validation, timeouts, safe errors.
+- `src/serving.py`: checksum-verified model retrieval and inference.
+- `src/app.py`: Streamlit UI; `app/streamlit_app.py` is the deployment entry point.
+- `src/train.py`, `src/run_experiments.py`, `src/compare_experiments.py`: training, tracking and model selection.
+- `src/export_model.py`: exports the actual MLflow winner and checks parity on all test rows.
+- `src/evaluate_interface.py`: live language evaluation, separate from offline tests.
+
+Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Units must occur in the supporting quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block prediction and remove stale values. Missing or ambiguous inputs require clarification.
+
+These checks cannot prove semantic correctness of every extraction. The user therefore confirms the full form. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate, and the UI always labels it as historical.
+
+## Dataset and preprocessing
+
+The [Ames Housing dataset](https://jse.amstat.org/v19n3/decock/AmesHousing.txt), described by [Dean De Cock (2011)](https://jse.amstat.org/v19n3/decock.pdf), has **2,930 sales, 82 source columns, and the `SalePrice` target**. Ames is an alternative to the course's suggested datasets; its documented target, mixed features and missing data make it suitable for this regression project.
+
+Fourteen predictors are used:
+
+- Numeric: lot area, lot frontage, above-ground living area, quality, year built, above-ground full bathrooms, garage capacity, basement area, and above-ground bedrooms.
+- Categorical: neighborhood, house style, building type, zoning, central air.
+
+Identifiers and target values are excluded. Lot frontage has 490 missing values; garage capacity and basement area each have one. The fixed split is **1,758 train / 586 validation / 586 test**. All learned transformations fit exclusively on training data: numeric median imputation and standardization; categorical mode imputation and one-hot encoding. Inputs are copied rather than modified, and unseen categories retain the fitted output shape.
+
+Random Forest does not require standardization. It is included to satisfy and test the course's scaling requirement, not claimed as an accuracy improvement. The fitted transformations and regressor are saved together.
+
+## Reproduce training
+
+Install the complete training/test environment and restore the DVC data:
+
+~~~bash
 python -m pip install -r requirements.txt
 python -m pip check
 python -m src.data_storage bootstrap
 python -m dvc pull
-```
-
-### How data sharing works
-
-The raw dataset is stored with DVC, not in Git history. A [GitHub Release attachment](https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/tag/data-v1) contains the local DVC remote. The bootstrap command downloads that attachment, checks its SHA-256 digest and object manifest, and restores `.dvc-remote/`. `dvc pull` then retrieves the dataset using the committed pointer.
-
-**The bootstrap step is required on a new computer before the first `dvc pull`.** The local remote configuration does not point to another person's computer. No additional service account, private token, or storage subscription is required for data restoration.
-
-For an already downloaded attachment:
-
-```bash
-python -m src.data_storage bootstrap --archive /path/to/ames-dvc-remote-v1.zip
-python -m dvc pull
-```
-
-## Training and experiment comparison
-
-All model settings, predictor names, split proportions, random seeds, paths, validation ranges, and thresholds are defined in [configs/model.yaml](configs/model.yaml).
-
-The split is fixed at **1,758 training / 586 validation / 586 test records**. Numeric medians, categorical modes, and encoder categories are fitted exclusively on the training partition. Unseen categories retain the expected feature shape.
-
-Run the five configured experiments:
-
-```bash
 python -m src.run_experiments
 python -m src.compare_experiments
-```
+python -m src.export_model
+~~~
 
-The experiments vary tree count, tree depth, and minimum leaf size. Selection uses **validation MAE**, which expresses the typical absolute error in dollars. RMSE highlights larger misses; R² summarizes variance explained. Only the validation-selected winner receives a final test evaluation in this experiment batch.
+Bootstrap restores the published, checksum-verified local DVC remote. A new checkout needs it **before** `dvc pull`; no private storage account is required. Raw data and model artifacts are excluded from Git. Features, split settings, hyperparameters and acceptance gates live in [configs/model.yaml](configs/model.yaml).
 
-Each run records effective model parameters, preprocessing settings, the DVC content hash, split sizes, source revision metadata, the configuration file, metrics, and the complete preprocessing/model pipeline. The model artifact includes an input signature and the custom preprocessing code.
+Five Random Forest configurations vary tree count, maximum depth and minimum leaf size. Each logs effective parameters, preprocessing settings, data hash, split sizes, source revision, complete model, validation metrics and three test metrics to MLflow.
 
-The comparison command queries MLflow with `mlflow.search_runs()` and compares the latest batch for the current dataset version, requiring one completed run per configured experiment. It rejects incomplete batches. Repeating the experiment command creates a new batch; previous runs remain available locally.
+**Selection uses validation MAE before any test metrics are calculated.** All frozen candidates are then evaluated on the test set to meet the rubric. The winner is not reselected from test results. MAE/RMSE are in dollars; R² is not a confidence percentage. Acceptance requires MAE ≤ $35,000 and R² ≥ 0.75.
 
-Run the selected configuration and enforce test-set acceptance gates:
+View the runs:
 
-```bash
-python -m src.train
-```
-
-Acceptance requires **MAE ≤ $35,000 and R² ≥ 0.75**. A failure produces a nonzero exit code. The committed selection is in `model.selected_experiment`; changing experiments requires reviewing the new validation comparison before updating that selection.
-
-Experiment evidence:
-
-- [Ranked experiment results](reports/experiment_comparison.csv)
-- [Dataset findings, selected run, and test metrics](reports/experiment_summary.json)
-- [MLflow experiment screenshot](reports/mlflow_experiments.png)
-
-### View MLflow locally
-
-```bash
+~~~bash
 python -m mlflow ui --backend-store-uri sqlite:///artifacts/mlflow.db --host 127.0.0.1 --port 5000
-```
+~~~
 
-Open [localhost:5000](http://127.0.0.1:5000) and select `ames-housing`. Run the experiment command first in a fresh checkout. The local SQLite database and model files are intentionally excluded from Git; the committed evidence records the completed reference batch. CI maintains its own `ames-housing-ci` experiment and uploads its artifacts.
+Open http://localhost:5000 and select `ames-housing`. The comparison script uses `mlflow.search_runs()`, rejects incomplete batches, and ranks comparable runs for the current data version. The local database and binaries are intentionally excluded from Git; rerunning the five experiments recreates them.
 
-## Tests and continuous integration
+## Results
 
-```bash
+The validation-selected model uses **200 trees, unrestricted depth, minimum leaf size 1**:
+
+- Validation MAE: **$16,639**
+- Test MAE: **$17,765**
+- Test RMSE: **$30,245**
+- Test R²: **0.886**
+- Training-median baseline test MAE: **$63,823**
+
+Test MAE is about 72% lower than that simple baseline. Some other configurations have better test results; retaining the validation-selected winner avoids choosing based on the test set.
+
+All five configurations and their test metrics are in [reports/experiment_comparison.csv](reports/experiment_comparison.csv). [reports/experiment_summary.json](reports/experiment_summary.json) records data/split evidence; [configs/model_release.json](configs/model_release.json) identifies the selected run, checksum and training categories.
+
+[reports/interface_evaluation.json](reports/interface_evaluation.json) records actual local-model evaluation. The small development set covers complete descriptions, unit conversion, follow-ups, missing data, ambiguity, contradictions, invalid inputs and scope. It is **not a general accuracy benchmark**: prompts and validation were improved using these cases.
+
+## Testing and CI
+
+~~~bash
 pytest tests/ -v
-```
+python -m src.evaluate_interface
+~~~
 
-The suite covers six preprocessing behaviors, three actual-data validation checks, and two model validation checks. The model fixture trains on a fixed 1,000-row subset of the training partition and predicts on the reserved test partition. Additional tests check performance-gate rejection, integrity/path handling for downloaded data, control and shifted monitoring results, and predictions after reloading an MLflow model artifact.
+The first command runs deterministic tests for preprocessing, actual model shape/performance, artifact reload, validation, HTTP failures, explanation consistency, and UI confirmation/reset. Transport responses are mocked in unit tests; those tests do not measure language accuracy.
 
-The [GitHub Actions workflow](.github/workflows/mlops.yml) runs on pushes to `main` and pull requests targeting `main`:
+The second requires the real local model and evaluates actual extraction, housing inference and explanations. It is separate because hardware availability and latency should not make ordinary CI unreliable. No paid calls are made.
 
-1. **Test job:** install dependencies, restore versioned data, and run the full pytest suite.
-2. **Training job:** start only after successful tests, independently restore data, train the selected configuration, and enforce performance gates.
+GitHub Actions runs the tests, gated training, and a container build with health and actual released-model prediction checks. See the [workflow](.github/workflows/mlops.yml) and [verification checklist](CHECKLIST.md) for current status.
 
-The workflow uses read-only repository permissions. Dataset restoration requires no secrets, including for pull requests from forks. Test results and training evidence are attached to the workflow run. [View Actions history](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml).
+## Docker
 
-## Drift monitoring
+Build and launch manual mode:
 
-Run the unchanged control:
+~~~bash
+docker build -t ames-capstone .
+docker run --rm -p 127.0.0.1:8501:8501 -e AMES_LLM_ENABLED=false ames-capstone
+~~~
 
-```bash
-python -m src.monitor_drift --scenario control
-```
+For the full local-language workflow:
 
-Run the deliberately shifted production simulation:
+~~~bash
+docker compose up --build
+~~~
 
-```bash
-python -m src.monitor_drift --scenario drifted
-```
+Compose downloads Qwen into a named volume, keeps Ollama on the internal container network, and exposes the app only on localhost. The default uses CPU inference and may be slow; provide adequate RAM and disk space. Native Ollama can use supported GPUs without GPU container configuration. Stop with `docker compose down`; model volumes remain.
 
-The second command is **expected to exit with code 1** when drift share exceeds the configured 30% threshold. It writes the report before returning that alert status. An unexpected execution failure is reported separately with exit code 2.
+The app image runs as a non-root user, uses inference-only dependencies, and excludes secrets, raw data, MLflow artifacts and local LLM weights. It retrieves and verifies the selected housing model at runtime.
 
-Evidently evaluates all 14 raw predictors using explicit numerical and categorical definitions. The simulation changes lot area, lot frontage, living area, basement area, and neighborhood composition without altering the source dataset. Identifiers and target values are not monitored as predictors.
+## Deployment and limitations
 
-Open the generated `reports/drift_control.html` and `reports/drift_drifted.html` files in a browser. Compact JSON summaries accompany the reports. [MONITORING.md](MONITORING.md) explains which features drifted, the possible effect on model performance, and the recommended response.
+The complete demonstration runs locally. Streamlit Community Cloud can host the **manual housing-model demo** using entry point `app/streamlit_app.py`, Python 3.12, `AMES_HOSTED=true`, and `AMES_LLM_ENABLED=false`. A cloud app cannot reach a reviewer's own localhost. Do not expose an unauthenticated local Ollama server to solve that problem. Full hosted language features require a separately provisioned model service and are outside this no-payment local setup.
 
-## Reproducing the complete verification sequence
+Other limits:
 
-After setup:
+- Historical Ames sales do not establish present prices or generalize to other locations.
+- A random split measures within-dataset performance, not future-market performance.
+- Fourteen features omit condition details, renovations and other factors.
+- Average test error is not a per-home uncertainty interval.
+- Range checks do not establish that every permitted combination occurred in training.
+- Small local models can misread details or scope. Form review remains necessary.
+- This educational app is not a hardened multi-user service.
 
-```bash
-pytest tests/ -v
-python -m src.run_experiments
-python -m src.compare_experiments
-python -m src.train
-python -m src.monitor_drift --scenario control
-python -m src.monitor_drift --scenario drifted
-```
+## Engineering reflection
 
-Expect success from each command except the final deliberate drift alert. Review the experiment evidence, generated HTML reports, and Actions history alongside the documentation.
+The main integration challenge was the boundary between language interpretation and numerical prediction. Structured output alone did not prevent missing fields or invented units. Explicit checks, quoted evidence and a review step made those failures visible.
 
-## Maintainer data preparation
+A local model trades hosted convenience for no recurring API cost and local processing. Unit tests make application behavior repeatable; live evaluation exposes mistakes that mocked responses cannot reveal. Selecting on validation before reporting every test result preserves a defensible evaluation procedure.
 
-The source version and release bundle are already prepared. To reproduce their construction:
+Useful next improvements are a larger independently written language evaluation set, easier feature collection, calibrated prediction intervals and temporal/generalization evaluation. More interface features would not resolve those measurement limitations.
 
-```bash
-python -m src.data_storage acquire
-python -m dvc add data/raw/AmesHousing.tsv
-python -m dvc push
-python -m src.data_storage package --repository MichaelMartiradonna/ames-housing-mlops
-```
+Development used AI coding assistance. The [guided checkpoints](docs/LEARNING_CHECKPOINTS.md) describe what the author should explain and reproduce independently before submission; they do not claim an independent assessment has already occurred.
 
-The acquisition command rejects source bytes that differ from the approved SHA-256 digest. Changing the dataset version requires reviewing the data, updating its checksums and DVC pointer, and publishing a corresponding release attachment. Do not overwrite an existing release with different bytes while retaining its manifest.
+## Prior work
 
-## Boundaries
+This extends an earlier Ames MLOps assignment. DVC integrity checks, MLflow, performance gates, CI and Evidently monitoring were retained. New work adds scaling verification, test metrics for all configurations, the local LLM interface, live evaluation, Streamlit tests, serving/export and Docker.
 
-This project demonstrates a reproducible local and CI workflow. It does not include serving infrastructure, live property data, automated retraining, or operational paging. Those would need additional requirements and validation. The retrospective separates implemented controls from future recommendations.
+Earlier evidence is preserved under [reports/original-mlops](reports/original-mlops) and the [original write-up](docs/original-mlops-readme.md). Its old counts, metrics, screenshots and workflow URLs describe that version, not verification of the capstone interface.

@@ -6,7 +6,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.utils.validation import check_is_fitted
 
 
@@ -56,7 +56,10 @@ class FrameValidator(TransformerMixin, BaseEstimator):
 
 def build_preprocessor(numeric_features: list[str], categorical_features: list[str]) -> Pipeline:
     """Keep learned imputers and encoding inside the model to prevent data leakage."""
-    numeric = SimpleImputer(strategy="median", keep_empty_features=True)
+    numeric = Pipeline([
+        ("impute", SimpleImputer(strategy="median", keep_empty_features=True)),
+        ("scale", StandardScaler()),
+    ])
     categorical = Pipeline([
         ("impute", SimpleImputer(strategy="most_frequent", keep_empty_features=True)),
         # New categories receive zeros instead of changing the fitted feature layout.

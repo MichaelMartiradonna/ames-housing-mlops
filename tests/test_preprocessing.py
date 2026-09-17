@@ -15,10 +15,23 @@ def sample():
 def test_numeric_missing_values_use_training_median():
     processor = build_preprocessor(["area"], ["style"])
     transformed = processor.fit_transform(sample())
-    assert transformed[2, 0] == 150.0
+    numeric = processor.named_steps["columns"].named_transformers_["numeric"]
+    assert numeric.named_steps["impute"].statistics_[0] == 150.0
+    assert transformed[2, 0] == 0.0
     # An inference outlier must not change the training-time imputation value.
     future = pd.DataFrame({"area": [np.nan, 10000.0], "style": ["ranch", "ranch"]})
-    assert processor.transform(future)[0, 0] == 150.0
+    assert processor.transform(future)[0, 0] == 0.0
+
+
+def test_scaling_uses_only_training_statistics():
+    frame = pd.DataFrame({"area": [100.0, 200.0, 300.0], "style": ["ranch"] * 3})
+    processor = build_preprocessor(["area"], ["style"])
+    values = processor.fit_transform(frame)[:, 0]
+    assert values.mean() == pytest.approx(0.0)
+    assert values.std() == pytest.approx(1.0)
+    future = pd.DataFrame({"area": [400.0], "style": ["ranch"]})
+    expected = (400.0 - 200.0) / np.std([100.0, 200.0, 300.0])
+    assert processor.transform(future)[0, 0] == pytest.approx(expected)
 
 
 def test_categorical_missing_values_use_training_mode():

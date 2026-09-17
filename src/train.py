@@ -33,7 +33,7 @@ def build_model(config: dict, experiment_key: str | None = None) -> Pipeline:
     return Pipeline([("preprocess", preprocessing), ("model", model)])
 
 
-def evaluate_test_run(model: Pipeline, splits: DataSplits, config: dict, run_id: str) -> dict:
+def evaluate_test_run(model: Pipeline, splits: DataSplits, config: dict, run_id: str, *, enforce_gate: bool = True) -> dict:
     metrics = regression_metrics(splits.y_test, model.predict(splits.X_test))
     with mlflow.start_run(run_id=run_id):
         mlflow.set_tag("test_evaluated", "true")
@@ -42,7 +42,9 @@ def evaluate_test_run(model: Pipeline, splits: DataSplits, config: dict, run_id:
             enforce_performance(metrics, config)
         except PerformanceGateError:
             mlflow.set_tag("performance_gate", "failed")
-            raise
+            if enforce_gate:
+                raise
+            return metrics
         mlflow.set_tag("performance_gate", "passed")
     return metrics
 
@@ -74,6 +76,7 @@ def train_run(
             "test_size": config["split"]["test_size"],
             "validation_size": config["split"]["validation_size"],
             "numeric_imputation": "median",
+            "numeric_scaling": "standard_scaler_train_only",
             "categorical_imputation": "most_frequent",
             "categorical_encoding": "one_hot_ignore_unknown",
             "numeric_features": json.dumps(config["data"]["numeric_features"]),

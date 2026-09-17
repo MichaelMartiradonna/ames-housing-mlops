@@ -1,0 +1,53 @@
+{
+  "evaluated_at": "2026-09-17T16:41:28.516811+00:00",
+  "model": "qwen3.5:4b",
+  "provider": "local Ollama",
+  "api_cost_usd": 0,
+  "model_run_id": "4de2d93080c849e396f2635627989649",
+  "passed": 0,
+  "total": 1,
+  "note": "Small development evaluation, not a general accuracy estimate. Offline tests use mock responses separately.",
+  "cases": [
+    {
+      "id": "complete",
+      "message": "Estimate a historical Ames sale price for a single-family detached, one-story home in North Ames with low-density residential zoning and central air. It was built in 1960 and has quality 6 out of 10, 1,500 sq ft of above-ground living area, a 9,000 sq ft lot, 75 ft of street frontage, 1,000 sq ft of basement, 3 above-ground bedrooms, 2 above-ground full bathrooms, and a 2-car garage.",
+      "features": {
+        "Bldg Type": "1Fam",
+        "Neighborhood": "NAmes",
+        "MS Zoning": "RL",
+        "Central Air": "Y",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Gr Liv Area": 1500.0,
+        "Lot Frontage": 75.0,
+        "Total Bsmt SF": 1000.0,
+        "Bedroom AbvGr": 3.0,
+        "Full Bath": 2.0,
+        "Garage Cars": 2.0
+      },
+      "intent": "estimate",
+      "issues": [
+        "Please confirm Lot Area; its supporting text could not be verified."
+      ],
+      "missing": [
+        "Lot Area",
+        "House Style"
+      ],
+      "question": "",
+      "parse_usage": {
+        "model": "qwen3.5:4b",
+        "prompt_eval_count": 1153,
+        "eval_count": 339,
+        "total_duration": 11235936200
+      },
+      "checks": {
+        "ready": false,
+        "feature_names": false,
+        "feature_values": false,
+        "ambiguous_or_invalid_not_used": true
+      },
+      "passed": false,
+      "seconds": 11.38
+    }
+  ]
+}

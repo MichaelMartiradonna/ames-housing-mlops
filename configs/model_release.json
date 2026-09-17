@@ -1,0 +1,84 @@
+{
+  "version": "capstone-model-v1",
+  "run_id": "4de2d93080c849e396f2635627989649",
+  "configuration": "rf_200_full",
+  "data_version": "c2997eb69ab4bf946b9fbdb7e6805e36",
+  "sha256": "e62c3707554e06b03f80806872ca25afec9da0cfec49503d1da49f130413d54d",
+  "bytes": 35499843,
+  "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/releases/download/capstone-model-v1/model.skops",
+  "exported_at": "2026-09-17T16:25:39.608238+00:00",
+  "categories": {
+    "Neighborhood": [
+      "Blmngtn",
+      "Blueste",
+      "BrDale",
+      "BrkSide",
+      "ClearCr",
+      "CollgCr",
+      "Crawfor",
+      "Edwards",
+      "Gilbert",
+      "Greens",
+      "GrnHill",
+      "IDOTRR",
+      "Landmrk",
+      "MeadowV",
+      "Mitchel",
+      "NAmes",
+      "NPkVill",
+      "NWAmes",
+      "NoRidge",
+      "NridgHt",
+      "OldTown",
+      "SWISU",
+      "Sawyer",
+      "SawyerW",
+      "Somerst",
+      "StoneBr",
+      "Timber",
+      "Veenker"
+    ],
+    "House Style": [
+      "1.5Fin",
+      "1.5Unf",
+      "1Story",
+      "2.5Fin",
+      "2.5Unf",
+      "2Story",
+      "SFoyer",
+      "SLvl"
+    ],
+    "Bldg Type": [
+      "1Fam",
+      "2fmCon",
+      "Duplex",
+      "Twnhs",
+      "TwnhsE"
+    ],
+    "MS Zoning": [
+      "A (agr)",
+      "C (all)",
+      "FV",
+      "RH",
+      "RL",
+      "RM"
+    ],
+    "Central Air": [
+      "N",
+      "Y"
+    ]
+  },
+  "test_metrics": {
+    "mae": 17764.880126361124,
+    "rmse": 30245.137047725744,
+    "r2": 0.8859042287094702
+  },
+  "test_rows": 586,
+  "selection_metric": "validation_mae",
+  "test_set_used_for_selection": false,
+  "source_years": [
+    2006,
+    2010
+  ],
+  "export_parity_rows": 586
+}
