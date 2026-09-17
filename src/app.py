@@ -171,7 +171,9 @@ def main():
                     st.metric("Predicted sale price", f"${result['price']:,.0f}")
                     if result["explanation"]:
                         st.markdown(result["explanation"]["summary"].replace("$", r"\$"))
-                        st.caption(result["explanation"]["limitation"].replace("$", r"\$"))
+                        # Render the statistical caveat from trusted metadata. Small
+                        # models sometimes confuse prediction values with prediction errors.
+                        st.caption(f"Individual prediction errors may exceed the model’s average test error of \\${metadata['test_metrics']['mae']:,.0f}.")
                     elif result["error"]:
                         st.warning(result["error"])
                         st.caption("The price above comes from the trained housing model; a language explanation is unavailable.")

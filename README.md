@@ -95,7 +95,7 @@ flowchart LR
 
 Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Units must occur in the supporting quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block prediction and remove stale values. Missing or ambiguous inputs require clarification.
 
-These checks cannot prove semantic correctness of every extraction. The user therefore confirms the full form. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate, and the UI always labels it as historical.
+These checks cannot prove semantic correctness of every extraction. The user therefore confirms the full form. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate. The UI renders the historical scope and statistical caveat from trusted metadata; it does not rely on the language model's wording of prediction error.
 
 ## Dataset and preprocessing
 
