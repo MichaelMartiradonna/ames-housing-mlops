@@ -2,7 +2,7 @@
 
 import math
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StrictFloat, StrictInt
@@ -30,6 +30,16 @@ CATEGORY_LABELS = {
     "C (all)": "Commercial", "A (agr)": "Agricultural", "Y": "Yes", "N": "No",
 }
 INTEGER_FEATURES = {"Overall Qual", "Year Built", "Full Bath", "Garage Cars", "Bedroom AbvGr"}
+REQUIRED_FEATURES = ("Gr Liv Area", "Neighborhood", "Year Built", "Overall Qual")
+# Order optional fields by usefulness to a person describing a home.
+OPTIONAL_FEATURES = (
+    "Garage Cars", "Total Bsmt SF", "Full Bath", "Bedroom AbvGr", "Lot Area",
+    "Lot Frontage", "House Style", "Bldg Type", "MS Zoning", "Central Air",
+)
+QUICK_QUERY = (
+    "Estimate a historical Ames sale price for a home in North Ames, built in 1960, "
+    "with 1,500 sq ft of above-ground living area and material and finish quality 6 out of 10."
+)
 AREA_FEATURES = {"Lot Area", "Gr Liv Area", "Total Bsmt SF"}
 UNIT_PATTERNS = {
     "sq_ft": r"\b(?:sq\.?\s*ft|sqft|square\s+(?:feet|foot))\b|\bft[²2]",
@@ -75,6 +85,7 @@ class Review:
     issues: list[str]
     question: str = ""
     intent: str = "estimate"
+    defaulted: list[str] = field(default_factory=list)
 
     @property
     def ready(self) -> bool:
@@ -82,7 +93,10 @@ class Review:
 
 
 def validate_features(features: dict, categories: dict) -> Review:
-    """No silent defaults, type coercion, clipping, or unknown categories."""
+    """Require core facts; absent optional values may use the fitted imputers.
+
+    Invalid supplied values still block prediction rather than becoming defaults.
+    """
     config = load_config()
     valid, issues = {}, []
     expected = feature_names(config)
@@ -106,7 +120,10 @@ def validate_features(features: dict, categories: dict) -> Review:
             issues.append(f"Choose a supported value for {LABELS[key]}.")
         else:
             valid[key] = value
-    return Review(valid, [key for key in expected if key not in valid], issues)
+    return Review(
+        valid, [key for key in REQUIRED_FEATURES if key not in valid], issues,
+        defaulted=[key for key in OPTIONAL_FEATURES if features.get(key) is None],
+    )
 
 
 def review_extraction(extraction: Extraction, message: str, current: dict, categories: dict) -> Review:
@@ -144,6 +161,13 @@ def review_extraction(extraction: Extraction, message: str, current: dict, categ
             continue
         if isinstance(value, (int, float)):
             value *= factors[item.unit]
+        elif item.name in categories:
+            # Local models sometimes return the display label instead of its code.
+            # Normalize only an exact, unambiguous alias from the allowed category list.
+            matches = [code for code in categories[item.name]
+                       if value.casefold() in {code.casefold(), CATEGORY_LABELS.get(code, code).casefold()}]
+            if len(matches) == 1:
+                value = matches[0]
         merged[item.name] = value
     review = validate_features(merged, categories)
     review.issues.extend(issues)
@@ -167,8 +191,12 @@ def extraction_prompt(categories: dict) -> str:
         "an exact substring evidence quote. Do not repeat old fields from context. Use canonical "
         "category codes. House Style and Bldg Type are separate: one-story means House Style=1Story, "
         "single-family detached means Bldg Type=1Fam. If ambiguous, omit that field and ask a short question; never choose between "
-        "conflicting values. question may be empty when clear. If information is missing, ask for "
-        "home details; do not say the app cannot estimate prices. Extract ALL explicitly stated "
+        "conflicting values. question must be empty when the stated facts are clear. "
+        "Only Gr Liv Area, Neighborhood, Year Built and Overall Qual are required. "
+        "All other fields are optional: omit absent facts without asking for them. Code will "
+        "ask for missing required fields and show training-based defaults for optional fields. "
+        "Ask a question only about ambiguity or contradiction, not merely absent information. "
+        "Do not say the app cannot estimate prices. Extract ALL explicitly stated "
         "fields even if other fields are missing. Example latest_message: 'Built in 1960 with a "
         "2-car garage.' Correct JSON: {\"intent\":\"estimate\",\"updates\":["
         "{\"name\":\"Year Built\",\"value\":1960,\"unit\":\"none\",\"evidence\":\"Built in 1960\"},"

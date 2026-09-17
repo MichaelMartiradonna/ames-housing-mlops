@@ -1,24 +1,27 @@
 {
-  "verified_at": "2026-09-17",
+  "verified_at": "2026-09-17T19:03:36.350178+00:00",
   "project": "Ames Home-Price Lab capstone",
   "local_tests": {
-    "command": "pytest tests/ -v",
-    "passed": 45,
+    "command": "pytest tests/ -v --junitxml=artifacts/flexible-input-tests.xml",
+    "passed": 61,
     "failed": 0,
     "dependency_deprecation_warnings": 10
   },
   "live_llm_evaluation": {
     "report": "reports/interface_evaluation.json",
-    "cases_passed": 12,
-    "cases_total": 12,
+    "cases_passed": 16,
+    "cases_total": 16,
     "independent_accuracy_benchmark": false
   },
   "browser_walkthrough": {
-    "complete_description_extracted": true,
-    "confirmed_model_prediction": 159062.25,
+    "quick_example_four_facts_extracted": true,
+    "defaults_preview_verified": true,
+    "confirmed_model_prediction": 160000.625,
+    "displayed_prediction": "$160,001",
+    "optional_defaults_used": 10,
     "generated_explanation_shown": true,
-    "out_of_scope_rejected_after_prediction": true,
-    "prior_result_cleared": true
+    "partial_input_accuracy_note_shown": true,
+    "previous_full_input_walkthrough": "reports/development/required-14-verification.json"
   },
   "model_export": {
     "run_id": "4de2d93080c849e396f2635627989649",
@@ -28,8 +31,8 @@
   },
   "api_spend_usd": 0,
   "local_llm": "qwen3:4b via Ollama 0.34.1",
-  "ci_status": "passed",
-  "docker_desktop_reference_machine": "Engine startup failed on inaccessible internal sailor-ingest.sock; no factory reset performed.",
+  "ci_status": "Previous capstone passed; CI has not run on these local optional-input changes.",
+  "docker_desktop_reference_machine": "Passed: Docker Desktop 4.91.0, Engine 29.8.0, current app image built locally; localhost:8502 healthy; actual full and four-field predictions match native results; browser manual prediction verified. Earlier startup problem is no longer present. Full Compose stack not tested.",
   "hosted_full_llm_demo": false,
   "author_explanation_checkpoints_completed": false,
   "course_review_demo_delivered": false,
@@ -38,6 +41,21 @@
     "tested_commit": "3e3247d24d586189dd09d4e2f724b2ec99ea53a6",
     "container_build_health_and_released_model": "passed",
     "training": "passed",
-    "tests": "passed"
-  }
+    "tests": "passed",
+    "scope": "Original capstone revision, before optional-input changes."
+  },
+  "revision": "Reviewed local optional-input changes on flexible-home-inputs; based on 3756ec452d8e06938f93f83fb42a9ae7b5e7f130; Docker verified locally; not pushed or merged.",
+  "optional_input_evaluation": {
+    "report": "reports/optional_input_evaluation.json",
+    "validation_rows": 586,
+    "policies_compared": 6,
+    "model_retrained": false,
+    "test_set_evaluated": false,
+    "all_available_validation_mae": 16638.58236713798,
+    "four_required_validation_mae": 26783.066077929467,
+    "four_plus_garage_and_basement_validation_mae": 19861.135447952216,
+    "partial_input_mode_claimed_to_pass_full_input_gate": false
+  },
+  "user_review_of_optional_inputs_completed": true,
+  "docker_local_evidence": "reports/docker_verification.json"
 }

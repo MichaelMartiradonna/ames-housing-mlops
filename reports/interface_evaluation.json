@@ -1,5 +1,5 @@
 {
-  "evaluated_at": "2026-09-17T17:11:26.971097+00:00",
+  "evaluated_at": "2026-09-17T18:35:16.539767+00:00",
   "model": "qwen3:4b",
   "local_runtime": {
     "ollama_version": "0.34.1",
@@ -20,10 +20,208 @@
   "provider": "local Ollama",
   "api_cost_usd": 0,
   "model_run_id": "4de2d93080c849e396f2635627989649",
-  "passed": 12,
-  "total": 12,
+  "passed": 16,
+  "total": 16,
   "note": "Small development evaluation, not a general accuracy estimate. Offline tests use mock responses separately.",
   "cases": [
+    {
+      "id": "quick_estimate",
+      "message": "Estimate a historical Ames sale price for a home in North Ames, built in 1960, with 1,500 sq ft of above-ground living area and material and finish quality 6 out of 10.",
+      "features": {
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Gr Liv Area": 1500.0,
+        "Overall Qual": 6.0
+      },
+      "intent": "estimate",
+      "issues": [],
+      "missing": [],
+      "defaulted": [
+        "Garage Cars",
+        "Total Bsmt SF",
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "question": "",
+      "parse_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 794,
+        "eval_count": 20,
+        "total_duration": 4040782900
+      },
+      "prediction": 160000.625,
+      "explanation": {
+        "estimate_usd": 160001,
+        "summary": "The historical estimate for a home in Ames, Iowa from 2006\u20132010 is $160,001. This is a prediction based on past sales data, not an actual sale price or current appraisal.",
+        "limitation": "This estimate uses default values for unknown features like Garage Cars and Total Bsmt SF, which may reduce accuracy. Individual errors could exceed the average test error. The model was trained on Ames, Iowa sales from 2:06\u20132010."
+      },
+      "explanation_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 324,
+        "eval_count": 130,
+        "total_duration": 2671347500
+      },
+      "checks": {
+        "ready": true,
+        "feature_names": true,
+        "feature_values": true,
+        "ambiguous_or_invalid_not_used": true,
+        "explanation_matches_prediction": true
+      },
+      "passed": true,
+      "seconds": 11.56
+    },
+    {
+      "id": "optional_follow_up",
+      "message": "Add a 2-car garage and 1,000 sq ft of basement.",
+      "features": {
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Garage Cars": 2.0,
+        "Total Bsmt SF": 1000.0
+      },
+      "intent": "estimate",
+      "issues": [],
+      "missing": [],
+      "defaulted": [
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "question": "",
+      "parse_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 726,
+        "eval_count": 108,
+        "total_duration": 2614824500
+      },
+      "prediction": 160265.625,
+      "explanation": {
+        "estimate_usd": 160266,
+        "summary": "This property in Ames, Iowa sold between 2006\u20132010 is estimated at $160,266. This is a prediction based on historical data, not an actual sale price or current appraisal.",
+        "limitation": "The estimate uses default values for unknown features like Full Bath and Bedroom AbvGr. Individual errors may exceed the average test error. This model was trained on Ames, Iowa sales from 2006\u20132010."
+      },
+      "explanation_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 313,
+        "eval_count": 123,
+        "total_duration": 2488586700
+      },
+      "checks": {
+        "ready": true,
+        "feature_names": true,
+        "feature_values": true,
+        "ambiguous_or_invalid_not_used": true,
+        "explanation_matches_prediction": true
+      },
+      "passed": true,
+      "seconds": 8.03
+    },
+    {
+      "id": "invalid_optional",
+      "message": "Correction: garage capacity is -1 cars.",
+      "features": {
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0
+      },
+      "intent": "estimate",
+      "issues": [
+        "Garage capacity (cars) must be between 0 and 10."
+      ],
+      "missing": [],
+      "defaulted": [
+        "Total Bsmt SF",
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "question": "",
+      "parse_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 737,
+        "eval_count": 31,
+        "total_duration": 1548126300
+      },
+      "checks": {
+        "ready": true,
+        "ambiguous_or_invalid_not_used": true
+      },
+      "passed": true,
+      "seconds": 3.52
+    },
+    {
+      "id": "zero_optional",
+      "message": "The garage capacity is 0 cars and basement area is 0 sq ft.",
+      "features": {
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Garage Cars": 0.0,
+        "Total Bsmt SF": 0.0
+      },
+      "intent": "estimate",
+      "issues": [],
+      "missing": [],
+      "defaulted": [
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "question": "",
+      "parse_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 724,
+        "eval_count": 90,
+        "total_duration": 2436581700
+      },
+      "prediction": 145726.875,
+      "explanation": {
+        "estimate_usd": 145727,
+        "summary": "This property in Ames, Iowa sold between 2006\u20132010 is estimated at $145,727. This is a prediction based on historical data, not an actual sale price or current appraisal.",
+        "limitation": "The estimate uses default values for unknown features like Full Bath and Bedroom AbvGr. Individual errors may exceed the average test error. This model was trained on Ames, Iowa sales from 2006\u20132010."
+      },
+      "explanation_usage": {
+        "model": "qwen3:4b",
+        "prompt_eval_count": 313,
+        "eval_count": 123,
+        "total_duration": 2520922500
+      },
+      "checks": {
+        "ready": true,
+        "feature_names": true,
+        "feature_values": true,
+        "ambiguous_or_invalid_not_used": true,
+        "explanation_matches_prediction": true
+      },
+      "passed": true,
+      "seconds": 7.78
+    },
     {
       "id": "complete",
       "message": "Estimate a historical Ames sale price for a single-family detached, one-story home in North Ames with low-density residential zoning and central air. It was built in 1960 and has quality 6 out of 10, 1,500 sq ft of above-ground living area, a 9,000 sq ft lot, 75 ft of street frontage, 1,000 sq ft of basement, 3 above-ground bedrooms, 2 above-ground full bathrooms, and a 2-car garage.",
@@ -46,32 +244,33 @@
       "intent": "estimate",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "",
       "parse_usage": {
         "scope": {
           "model": "qwen3:4b",
           "prompt_eval_count": 297,
           "eval_count": 11,
-          "total_duration": 572728300
+          "total_duration": 893563100
         },
         "extraction": {
           "model": "qwen3:4b",
-          "prompt_eval_count": 1198,
-          "eval_count": 593,
-          "total_duration": 10144571100
+          "prompt_eval_count": 1251,
+          "eval_count": 595,
+          "total_duration": 10835406900
         }
       },
       "prediction": 159062.25,
       "explanation": {
         "estimate_usd": 159062,
-        "summary": "The model predicts a home value of $159,062 in Ames, Iowa. This estimate is a projection based on historical data from 2006\u20132010 and not an actual sale price.",
-        "limitation": "This estimate uses data from Ames, Iowa, 2006\u20132010. Individual predictions may exceed the average test error of $17,765."
+        "summary": "This property in Ames, Iowa sold between 2006\u20132010 is estimated at $159,062. This is a prediction based on historical data, not an actual sale price or current appraisal.",
+        "limitation": "The estimate uses default values for unknown details and may be less accurate. Individual errors could exceed the average test error of $17,765. This model was trained on Ames, Iowa sales from 2006\u20132010."
       },
       "explanation_usage": {
         "model": "qwen3:4b",
-        "prompt_eval_count": 252,
-        "eval_count": 112,
-        "total_duration": 2843689700
+        "prompt_eval_count": 298,
+        "eval_count": 128,
+        "total_duration": 2577632800
       },
       "checks": {
         "ready": true,
@@ -81,7 +280,7 @@
         "explanation_matches_prediction": true
       },
       "passed": true,
-      "seconds": 13.73
+      "seconds": 14.49
     },
     {
       "id": "metric_units",
@@ -90,47 +289,58 @@
         "Year Built": 1960.0,
         "Overall Qual": 6.0,
         "Gr Liv Area": 1500.0,
-        "Lot Area": 10890.0,
-        "Lot Frontage": 65.61679790000001,
-        "Total Bsmt SF": 1000.0,
+        "Neighborhood": "NAmes",
+        "MS Zoning": "RL",
+        "Central Air": "Y",
         "Bedroom AbvGr": 3.0,
         "Full Bath": 2.0,
         "Garage Cars": 2.0,
-        "Neighborhood": "NAmes",
+        "Lot Area": 10890.0,
+        "Lot Frontage": 65.61679790000001,
+        "Total Bsmt SF": 1000.0,
         "House Style": "1Story",
-        "Bldg Type": "1Fam",
-        "MS Zoning": "RL",
-        "Central Air": "Y"
+        "Bldg Type": "1Fam"
       },
       "intent": "estimate",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "",
       "parse_usage": {
-        "scope": {
-          "model": "qwen3:4b",
-          "prompt_eval_count": 295,
-          "eval_count": 12,
-          "total_duration": 701148400
-        },
-        "extraction": {
-          "model": "qwen3:4b",
-          "prompt_eval_count": 1196,
-          "eval_count": 591,
-          "total_duration": 10589923400
-        }
+        "passes": [
+          {
+            "scope": {
+              "model": "qwen3:4b",
+              "prompt_eval_count": 295,
+              "eval_count": 12,
+              "total_duration": 706293000
+            },
+            "extraction": {
+              "model": "qwen3:4b",
+              "prompt_eval_count": 1249,
+              "eval_count": 516,
+              "total_duration": 9257554700
+            }
+          },
+          {
+            "model": "qwen3:4b",
+            "prompt_eval_count": 689,
+            "eval_count": 99,
+            "total_duration": 3662099100
+          }
+        ]
       },
       "prediction": 162216.5,
       "explanation": {
         "estimate_usd": 162216,
-        "summary": "The model predicts a home value of $162,216 in Ames, Iowa. This estimate is a projection based on historical data from 2006\u20132010 and not an actual sale price.",
-        "limitation": "This estimate uses data from Ames, Iowa, 2006\u20132010. Individual predictions may exceed the average test error of $17,765."
+        "summary": "This property in Ames, Iowa sold between 2006\u20132010 is estimated at $162,216. This is a prediction based on historical data, not an actual sale price or current appraisal.",
+        "limitation": "The estimate uses default values for unknown details and may be less accurate. Individual errors could exceed the average test error of $17,765. This model was trained on Ames, Iowa sales from 2006\u20132010."
       },
       "explanation_usage": {
         "model": "qwen3:4b",
-        "prompt_eval_count": 252,
-        "eval_count": 112,
-        "total_duration": 2669839500
+        "prompt_eval_count": 298,
+        "eval_count": 128,
+        "total_duration": 2522155200
       },
       "checks": {
         "ready": true,
@@ -140,7 +350,7 @@
         "explanation_matches_prediction": true
       },
       "passed": true,
-      "seconds": 14.19
+      "seconds": 16.44
     },
     {
       "id": "follow_up",
@@ -164,32 +374,33 @@
       "intent": "estimate",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "",
       "parse_usage": {
         "scope": {
           "model": "qwen3:4b",
           "prompt_eval_count": 194,
           "eval_count": 12,
-          "total_duration": 514969800
+          "total_duration": 576779100
         },
         "extraction": {
           "model": "qwen3:4b",
-          "prompt_eval_count": 1161,
+          "prompt_eval_count": 1214,
           "eval_count": 59,
-          "total_duration": 1533915800
+          "total_duration": 1639946800
         }
       },
       "prediction": 159257.25,
       "explanation": {
         "estimate_usd": 159257,
-        "summary": "The model predicts a home value of $159,257 in Ames, Iowa. This estimate is a projection based on historical data, not a guaranteed sale price or current appraisal.",
-        "limitation": "This estimate uses data from Ames, Iowa between 2006\u20132010. Individual predictions may exceed the average test error of $17,765."
+        "summary": "This property in Ames, Iowa sold between 2006\u20132010 is estimated at $159,257. This is a prediction based on historical data, not an actual sale price or current appraisal.",
+        "limitation": "The estimate uses default values for unknown details and may be less accurate. Individual errors could exceed the average test error of $17,765. This model was trained on Ames, Iowa sales from 2006\u20132010."
       },
       "explanation_usage": {
         "model": "qwen3:4b",
-        "prompt_eval_count": 252,
-        "eval_count": 104,
-        "total_duration": 2187117200
+        "prompt_eval_count": 298,
+        "eval_count": 128,
+        "total_duration": 2556717300
       },
       "checks": {
         "ready": true,
@@ -199,7 +410,7 @@
         "explanation_matches_prediction": true
       },
       "passed": true,
-      "seconds": 4.41
+      "seconds": 4.97
     },
     {
       "id": "partial",
@@ -209,16 +420,31 @@
         "Year Built": 1995.0
       },
       "intent": "estimate",
-      "issues": [],
+      "issues": [
+        "Choose a supported value for Ames neighborhood.",
+        "Please confirm Overall Qual; its supporting text could not be verified.",
+        "Please confirm Garage Cars; its supporting text could not be verified.",
+        "Please confirm Total Bsmt SF; its supporting text could not be verified.",
+        "Please confirm Full Bath; its supporting text could not be verified.",
+        "Please confirm Bedroom AbvGr; its supporting text could not be verified.",
+        "Please confirm Lot Area; its supporting text could not be verified.",
+        "Please confirm Lot Frontage; its supporting text could not be verified.",
+        "Please confirm House Style; its supporting text could not be verified.",
+        "Please confirm Bldg Type; its supporting text could not be verified.",
+        "Please confirm MS Zoning; its supporting text could not be verified.",
+        "Please confirm Central Air; its supporting text could not be verified."
+      ],
       "missing": [
-        "Lot Area",
-        "Lot Frontage",
-        "Overall Qual",
-        "Full Bath",
+        "Neighborhood",
+        "Overall Qual"
+      ],
+      "defaulted": [
         "Garage Cars",
         "Total Bsmt SF",
+        "Full Bath",
         "Bedroom AbvGr",
-        "Neighborhood",
+        "Lot Area",
+        "Lot Frontage",
         "House Style",
         "Bldg Type",
         "MS Zoning",
@@ -226,10 +452,28 @@
       ],
       "question": "",
       "parse_usage": {
-        "model": "qwen3:4b",
-        "prompt_eval_count": 1232,
-        "eval_count": 110,
-        "total_duration": 2748700100
+        "passes": [
+          {
+            "scope": {
+              "model": "qwen3:4b",
+              "prompt_eval_count": 211,
+              "eval_count": 12,
+              "total_duration": 587326700
+            },
+            "extraction": {
+              "model": "qwen3:4b",
+              "prompt_eval_count": 1165,
+              "eval_count": 114,
+              "total_duration": 2268928100
+            }
+          },
+          {
+            "model": "qwen3:4b",
+            "prompt_eval_count": 951,
+            "eval_count": 424,
+            "total_duration": 10331176600
+          }
+        ]
       },
       "checks": {
         "ready": true,
@@ -238,7 +482,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 5.58
+      "seconds": 13.31
     },
     {
       "id": "incomplete",
@@ -247,45 +491,29 @@
       "intent": "estimate",
       "issues": [],
       "missing": [
-        "Lot Area",
-        "Lot Frontage",
         "Gr Liv Area",
-        "Overall Qual",
+        "Neighborhood",
         "Year Built",
-        "Full Bath",
+        "Overall Qual"
+      ],
+      "defaulted": [
         "Garage Cars",
         "Total Bsmt SF",
+        "Full Bath",
         "Bedroom AbvGr",
-        "Neighborhood",
+        "Lot Area",
+        "Lot Frontage",
         "House Style",
         "Bldg Type",
         "MS Zoning",
         "Central Air"
       ],
-      "question": "What is the historical neighborhood for the home?",
+      "question": "",
       "parse_usage": {
-        "passes": [
-          {
-            "scope": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 194,
-              "eval_count": 12,
-              "total_duration": 551976700
-            },
-            "extraction": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 1095,
-              "eval_count": 29,
-              "total_duration": 800721100
-            }
-          },
-          {
-            "model": "qwen3:4b",
-            "prompt_eval_count": 1224,
-            "eval_count": 29,
-            "total_duration": 1358943300
-          }
-        ]
+        "model": "qwen3:4b",
+        "prompt_eval_count": 965,
+        "eval_count": 20,
+        "total_duration": 1668117500
       },
       "checks": {
         "ready": true,
@@ -294,7 +522,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 2.86
+      "seconds": 2.99
     },
     {
       "id": "ambiguous_units",
@@ -302,20 +530,21 @@
       "features": {},
       "intent": "estimate",
       "issues": [
-        "Please specify the units for Above-ground living area (sq ft).",
         "Please specify the units for Above-ground living area (sq ft)."
       ],
       "missing": [
-        "Lot Area",
-        "Lot Frontage",
         "Gr Liv Area",
-        "Overall Qual",
+        "Neighborhood",
         "Year Built",
-        "Full Bath",
+        "Overall Qual"
+      ],
+      "defaulted": [
         "Garage Cars",
         "Total Bsmt SF",
+        "Full Bath",
         "Bedroom AbvGr",
-        "Neighborhood",
+        "Lot Area",
+        "Lot Frontage",
         "House Style",
         "Bldg Type",
         "MS Zoning",
@@ -323,35 +552,17 @@
       ],
       "question": "",
       "parse_usage": {
-        "passes": [
-          {
-            "scope": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 203,
-              "eval_count": 12,
-              "total_duration": 579650600
-            },
-            "extraction": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 1104,
-              "eval_count": 70,
-              "total_duration": 1522957400
-            }
-          },
-          {
-            "model": "qwen3:4b",
-            "prompt_eval_count": 1233,
-            "eval_count": 70,
-            "total_duration": 2070554800
-          }
-        ]
+        "model": "qwen3:4b",
+        "prompt_eval_count": 974,
+        "eval_count": 20,
+        "total_duration": 674317700
       },
       "checks": {
         "ready": true,
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 4.28
+      "seconds": 2.8
     },
     {
       "id": "conflicting_values",
@@ -359,20 +570,20 @@
       "features": {},
       "intent": "estimate",
       "issues": [
-        "Full bathrooms above ground must be a finite number.",
         "Full bathrooms above ground must be a finite number."
       ],
       "missing": [
-        "Lot Area",
-        "Lot Frontage",
         "Gr Liv Area",
-        "Overall Qual",
+        "Neighborhood",
         "Year Built",
-        "Full Bath",
+        "Overall Qual"
+      ],
+      "defaulted": [
         "Garage Cars",
         "Total Bsmt SF",
         "Bedroom AbvGr",
-        "Neighborhood",
+        "Lot Area",
+        "Lot Frontage",
         "House Style",
         "Bldg Type",
         "MS Zoning",
@@ -380,35 +591,17 @@
       ],
       "question": "How many full bathrooms above ground does the house have?",
       "parse_usage": {
-        "passes": [
-          {
-            "scope": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 201,
-              "eval_count": 12,
-              "total_duration": 573779800
-            },
-            "extraction": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 1102,
-              "eval_count": 81,
-              "total_duration": 1723033500
-            }
-          },
-          {
-            "model": "qwen3:4b",
-            "prompt_eval_count": 1231,
-            "eval_count": 81,
-            "total_duration": 2254246500
-          }
-        ]
+        "model": "qwen3:4b",
+        "prompt_eval_count": 958,
+        "eval_count": 49,
+        "total_duration": 1880826300
       },
       "checks": {
         "ready": true,
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 4.66
+      "seconds": 4.19
     },
     {
       "id": "invalid_value",
@@ -430,12 +623,13 @@
       },
       "intent": "estimate",
       "issues": [
-        "Above-ground living area (sq ft) must be between 1 and 6500.",
+        "Above-ground living area (sq ft) must be a finite number.",
         "Above-ground living area (sq ft) must be between 1 and 6500."
       ],
       "missing": [
         "Gr Liv Area"
       ],
+      "defaulted": [],
       "question": "",
       "parse_usage": {
         "passes": [
@@ -444,20 +638,20 @@
               "model": "qwen3:4b",
               "prompt_eval_count": 199,
               "eval_count": 12,
-              "total_duration": 555195100
+              "total_duration": 586254500
             },
             "extraction": {
               "model": "qwen3:4b",
-              "prompt_eval_count": 1166,
+              "prompt_eval_count": 1219,
               "eval_count": 71,
-              "total_duration": 1827297900
+              "total_duration": 1802699200
             }
           },
           {
             "model": "qwen3:4b",
-            "prompt_eval_count": 1167,
+            "prompt_eval_count": 508,
             "eval_count": 71,
-            "total_duration": 1744178600
+            "total_duration": 3276605800
           }
         ]
       },
@@ -466,7 +660,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 4.22
+      "seconds": 5.8
     },
     {
       "id": "invalid_quality",
@@ -488,43 +682,25 @@
       },
       "intent": "estimate",
       "issues": [
-        "Material and finish quality (1\u201310) must be between 1 and 10.",
         "Material and finish quality (1\u201310) must be between 1 and 10."
       ],
       "missing": [
         "Overall Qual"
       ],
+      "defaulted": [],
       "question": "",
       "parse_usage": {
-        "passes": [
-          {
-            "scope": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 200,
-              "eval_count": 12,
-              "total_duration": 555619100
-            },
-            "extraction": {
-              "model": "qwen3:4b",
-              "prompt_eval_count": 1167,
-              "eval_count": 68,
-              "total_duration": 1754204100
-            }
-          },
-          {
-            "model": "qwen3:4b",
-            "prompt_eval_count": 1167,
-            "eval_count": 63,
-            "total_duration": 1619786100
-          }
-        ]
+        "model": "qwen3:4b",
+        "prompt_eval_count": 513,
+        "eval_count": 49,
+        "total_duration": 1263631200
       },
       "checks": {
         "ready": true,
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 4.05
+      "seconds": 3.36
     },
     {
       "id": "wrong_city",
@@ -548,12 +724,13 @@
       "intent": "out_of_scope",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "I can estimate historical Ames home sale prices from 2006\u20132010. Please describe an Ames home; current valuations and unrelated requests are outside this model's scope.",
       "parse_usage": {
         "model": "qwen3:4b",
         "prompt_eval_count": 194,
         "eval_count": 14,
-        "total_duration": 585570200
+        "total_duration": 537414400
       },
       "checks": {
         "ready": true,
@@ -561,7 +738,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 0.61
+      "seconds": 0.56
     },
     {
       "id": "unrelated",
@@ -570,12 +747,13 @@
       "intent": "out_of_scope",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "I can estimate historical Ames home sale prices from 2006\u20132010. Please describe an Ames home; current valuations and unrelated requests are outside this model's scope.",
       "parse_usage": {
         "model": "qwen3:4b",
         "prompt_eval_count": 190,
         "eval_count": 14,
-        "total_duration": 490702600
+        "total_duration": 461540400
       },
       "checks": {
         "ready": true,
@@ -583,7 +761,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 0.53
+      "seconds": 0.5
     },
     {
       "id": "instruction_override",
@@ -592,12 +770,13 @@
       "intent": "out_of_scope",
       "issues": [],
       "missing": [],
+      "defaulted": [],
       "question": "I can estimate historical Ames home sale prices from 2006\u20132010. Please describe an Ames home; current valuations and unrelated requests are outside this model's scope.",
       "parse_usage": {
         "model": "qwen3:4b",
         "prompt_eval_count": 206,
         "eval_count": 14,
-        "total_duration": 540961100
+        "total_duration": 520184300
       },
       "checks": {
         "ready": true,
@@ -606,7 +785,7 @@
         "ambiguous_or_invalid_not_used": true
       },
       "passed": true,
-      "seconds": 0.58
+      "seconds": 0.55
     }
   ]
 }
