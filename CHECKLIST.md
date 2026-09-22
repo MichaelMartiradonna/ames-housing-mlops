@@ -22,8 +22,11 @@
 - [x] Original required-14-field version: 12/12 live development cases, 45 tests and browser walkthrough verified.
 - [x] Capstone branch and selected model release published; a fresh download was verified.
 - [x] GitHub tests, training and container checks passed: https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35251447840
-- [ ] Author completes guided explanation checkpoints and personal reflection.
-- [ ] Author gives or records the course demo and submits the public repository link.
+- [x] README reflection covers lessons, challenges, tradeoffs, improvements, and AI assistance.
+- [x] Course requirements reviewed against the implementation and evidence; see [docs/SUBMISSION.md](docs/SUBMISSION.md).
+- [x] Live-demo walkthrough prepared with natural-language input, actual prediction, explanation, and edge cases.
+- [ ] Give the live course demo or include an actual screen recording.
+- [ ] Submit the public repository link through the course platform.
 
 ## Optional-input revision
 
@@ -38,4 +41,4 @@
 
 The earlier Windows Docker startup issue is no longer present. Local verification on Docker Desktop 4.91.0 / Engine 29.8.0 passed for the current app in manual mode. See [reports/docker_verification.json](reports/docker_verification.json) for source hashes and results, and [docs/DOCKER_WALKTHROUGH.md](docs/DOCKER_WALKTHROUGH.md) to repeat the steps. The full Ollama Compose stack remains unverified; the native app provides the tested natural-language workflow.
 
-A full hosted language demo is not part of the chosen no-payment local model setup. Earlier MLOps verification remains in reports/original-mlops and is not evidence for the new interface. The separate independent skills assessment is still planned for after submission.
+A full hosted language demo is not part of the chosen no-payment local model setup. Earlier MLOps verification remains in reports/original-mlops and is not evidence for the new interface. Guided explanation questions and an extra independently written test are optional learning activities, not requirements in the supplied course rubric. They do not block submission. The separate independent skills assessment remains a possible activity after submission; it has not been completed.

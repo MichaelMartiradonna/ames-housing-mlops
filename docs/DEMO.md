@@ -2,6 +2,17 @@
 
 Allow about five minutes. Start Ollama and the Streamlit app as described in the README. Wait until the app says the local model is ready. The first request after model unloading may take longer.
 
+## Prepared narration
+
+Use these concise notes alongside the actions below; adapt them as needed.
+
+- **Introduction:** "Ames Home-Price Lab turns a home description into a historical sale-price estimate. It uses Ames sales from 2006–2010 and is intended as an educational demonstration."
+- **Extraction and review:** "The local language model extracts stated details. The review screen separates those facts from missing optional details, which use disclosed training-set medians or most-common categories. I can correct the inputs before confirming."
+- **Prediction:** "The saved Random Forest pipeline generates this price, and the language model explains that result. Average evaluation error describes performance across many homes; it is not a guaranteed range for this property."
+- **Evaluation:** "Five configurations were compared using validation MAE. The selected model's full-input test MAE is about $17,765 and R² is 0.886. The shorter four-detail form has separate validation results and higher average error."
+- **Edge case:** "The app requests missing required facts and declines questions outside its historical Ames scope. It should not present a current Chicago valuation from this dataset."
+- **Conclusion:** "The repository includes reproducible training, MLflow comparison, automated tests, a live language evaluation report, and a verified Docker app. Development used AI coding assistance."
+
 ## Successful prediction
 
 1. Open **Explore a home** and select **Quick example**.
