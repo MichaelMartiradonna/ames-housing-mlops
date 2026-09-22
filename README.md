@@ -2,7 +2,9 @@
 
 A capstone application that turns an ordinary home description into a **reviewable, model-backed historical price estimate**. A local language model extracts the details; the selected Random Forest predicts the sale price; the language model explains that actual result.
 
-This educational tool explores Ames, Iowa sales from **2006–2010**. It is not a current appraisal or an investment tool.
+This educational tool is for learners and reviewers exploring Ames, Iowa sales from **2006–2010**. It makes a trained tabular model accessible through ordinary descriptions and a reviewable form. It is not a current appraisal or an investment tool.
+
+For course review, see the [submission guide and requirement evidence](docs/SUBMISSION.md) and the [live-demo walkthrough](docs/DEMO.md).
 
 [![Validation](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml/badge.svg)](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml)
 
@@ -217,15 +219,17 @@ Other limits:
 - Small local models can misread details or scope. Form review remains necessary.
 - This educational app is not a hardened multi-user service.
 
-## Engineering reflection
+## Reflection
 
-The main integration challenge was the boundary between language interpretation and numerical prediction. Structured output alone did not prevent missing fields or invented units. Explicit checks, quoted evidence and a review step made those failures visible.
+A key lesson from this project is that language extraction, missing-value defaults, and price prediction are separate responsibilities. The language model extracts stated facts; saved training statistics supply disclosed defaults; the Random Forest generates the estimate. Correctly formatted output alone does not establish that the description was understood correctly. Similarly, average test error is not a guaranteed price range for an individual home.
 
-A local model trades hosted convenience for no recurring API cost and local processing. Unit tests make application behavior repeatable; live evaluation exposes mistakes that mocked responses cannot reveal. Selecting on validation before reporting every test result preserves a defensible evaluation procedure.
+The main integration challenge was handling missing details, invented units, and follow-up corrections without silently treating assumptions as facts. Evidence checks, explicit validation, and user confirmation make those boundaries visible. Mocked tests verify application behavior under controlled responses, while live evaluation checks the actual language model.
 
-Useful next improvements are a larger independently written language evaluation set, easier feature collection, calibrated prediction intervals and temporal/generalization evaluation. More interface features would not resolve those measurement limitations.
+The main tradeoffs were local inference without API charges versus additional setup, and a shorter form versus higher average validation error. Selecting the model on validation data before reporting test results keeps selection separate from final evaluation.
 
-Development used AI coding assistance. The [guided checkpoints](docs/LEARNING_CHECKPOINTS.md) describe what the author should explain and reproduce independently before submission; they do not claim an independent assessment has already occurred.
+With more time, the priorities would be an independent language evaluation set, calibrated prediction intervals, and evaluation across later periods and other locations before expanding the app's claims.
+
+Development used AI coding assistance for implementation, testing, and documentation. This reflection describes the project's decisions and lessons; it does not claim unaided implementation or a completed independent skills assessment. The [learning checkpoints](docs/LEARNING_CHECKPOINTS.md) are optional study material, not a course submission requirement.
 
 ## Prior work
 

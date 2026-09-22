@@ -1,0 +1,129 @@
+{
+  "reviewed_at": "2026-09-22T18:18:01.387781+00:00",
+  "application_source_commit": "c3f38b417cf308bddcd076b2ef6bf093f0357eed",
+  "scope": "Course-requirement review and documentation finalization; application code, tests, configuration, and released model unchanged.",
+  "requirements_source": "User-supplied Capstone Project: End-to-End ML Project instructions and 100-point rubric.",
+  "public_repository": "https://github.com/MichaelMartiradonna/ames-housing-mlops",
+  "repository_visibility_verified": "PUBLIC",
+  "local_tests": {
+    "command": "python -m pytest tests/ -v --junitxml=artifacts/submission-tests.xml",
+    "passed": 61,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "dependency_deprecation_warnings": 10,
+    "by_module": {
+      "tests.test_app": 6,
+      "tests.test_artifacts": 1,
+      "tests.test_contracts": 4,
+      "tests.test_data": 3,
+      "tests.test_interface": 35,
+      "tests.test_model": 2,
+      "tests.test_monitoring": 2,
+      "tests.test_optional_serving": 1,
+      "tests.test_preprocessing": 7
+    }
+  },
+  "mlflow": {
+    "verified_existing_runs_without_retraining": true,
+    "configuration_count": 5,
+    "runs": [
+      {
+        "run_id": "4de2d93080c849e396f2635627989649",
+        "configuration": "rf_200_full",
+        "logged_parameter_count": 32,
+        "three_test_metrics_present": true,
+        "models": [
+          {
+            "model_id": "m-5be1a6eccd504729a2a315ff4844f322",
+            "metadata_present": true,
+            "model_artifact_present": true
+          }
+        ]
+      },
+      {
+        "run_id": "3d7ee7aeb3874cc898001857c353667d",
+        "configuration": "rf_100_full",
+        "logged_parameter_count": 32,
+        "three_test_metrics_present": true,
+        "models": [
+          {
+            "model_id": "m-bb492440d5cf442ebc9bc53def121030",
+            "metadata_present": true,
+            "model_artifact_present": true
+          }
+        ]
+      },
+      {
+        "run_id": "4594a6b08a3e4b0b83986a6a7a922235",
+        "configuration": "rf_200_depth12_leaf2",
+        "logged_parameter_count": 32,
+        "three_test_metrics_present": true,
+        "models": [
+          {
+            "model_id": "m-b51bbb4a2aa84d39936a6f1287f6783d",
+            "metadata_present": true,
+            "model_artifact_present": true
+          }
+        ]
+      },
+      {
+        "run_id": "76c33a8d8f2b4e5c99c35f5ce3d97c81",
+        "configuration": "rf_200_leaf3",
+        "logged_parameter_count": 32,
+        "three_test_metrics_present": true,
+        "models": [
+          {
+            "model_id": "m-f429b12273ad4b5fb49b339e1ffe14c6",
+            "metadata_present": true,
+            "model_artifact_present": true
+          }
+        ]
+      },
+      {
+        "run_id": "cfa25b6596ea4c86aa135ae0dd46d3af",
+        "configuration": "rf_100_depth6",
+        "logged_parameter_count": 32,
+        "three_test_metrics_present": true,
+        "models": [
+          {
+            "model_id": "m-e9c78827927d4ff78057aad47d90439d",
+            "metadata_present": true,
+            "model_artifact_present": true
+          }
+        ]
+      }
+    ]
+  },
+  "existing_live_language_evidence": {
+    "report": "reports/interface_evaluation.json",
+    "evaluated_at": "2026-09-17T18:35:16.539767+00:00",
+    "passed": 16,
+    "total": 16,
+    "rerun_during_this_documentation_review": false,
+    "independent_accuracy_benchmark": false
+  },
+  "existing_main_ci": {
+    "url": "https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35264826606",
+    "head_sha": "c3f38b417cf308bddcd076b2ef6bf093f0357eed",
+    "conclusion": "success"
+  },
+  "data_and_model_files_excluded_from_git": true,
+  "direct_dependency_versions_pinned": true,
+  "readme_reflection_present": true,
+  "demo_runbook_and_narration_prepared": true,
+  "demo_recording_created": false,
+  "course_review_demo_delivered": false,
+  "course_repository_link_submitted": false,
+  "optional_learning_exercises_required_by_course": false,
+  "independent_skills_assessment_completed": false,
+  "remaining_delivery_steps": [
+    "Give the live course demo or supply a recording showing a successful language workflow and an edge case.",
+    "Submit the public repository link through the course platform."
+  ],
+  "deployment_limits": {
+    "full_language_workflow": "Verified natively; not a cloud-hosted application.",
+    "docker": "Previously verified manual mode with actual predictions; see reports/docker_verification.json.",
+    "full_ollama_compose_stack_verified": false
+  }
+}

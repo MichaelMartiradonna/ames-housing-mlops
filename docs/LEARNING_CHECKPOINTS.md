@@ -1,6 +1,8 @@
-# Guided checkpoints before submission
+# Optional learning checkpoints
 
-These short checkpoints support understanding of the submitted work. They are separate from the broader independent skills assessment planned after the capstone.
+These exercises are optional study material. The supplied course instructions require working code, tests, documentation including a reflection, and a demo; they do not require these questions or an extra independently written test. Skipping these exercises does not leave a course deliverable incomplete. The required reflection is already included in [README.md](../README.md#reflection).
+
+These activities are also separate from any broader independent skills assessment after the capstone. Neither this guide nor the submission materials claim that an independent assessment has been completed.
 
 ## 1. Data and evaluation — about 10 minutes
 
@@ -28,10 +30,10 @@ On a new Git branch, add one original interface test for an edge case you think 
 
 Then run the complete tests and point to the CI result, model release manifest and experiment comparison.
 
-## 4. Personal reflection — about 5 minutes
+## 4. Optional reflection practice — about 5 minutes
 
-The README contains an implementation reflection, not a personal account of independent mastery. Add your own brief explanation of one decision you understand, one part you found difficult, and one improvement you would make. Be candid about AI assistance.
+The README contains the required project reflection and discloses AI assistance. For additional practice, explain one decision, one difficulty, and one future improvement without relying on the prepared wording. This is a learning exercise, not an additional submission requirement or evidence of independent mastery.
 
 ## Later: independent skills assessment
 
-After submission, use a separate 45-minute session to assess what you can do without generated solutions: inspect a dataset, explain a train/test split, diagnose a failing test, make a small API or UI change, and describe how to deploy it. Use the results to choose the next employment-focused portfolio task. This assessment has not yet been performed.
+If useful after submission, use a separate session to assess what you can do without generated solutions: inspect a dataset, explain a train/test split, diagnose a failing test, make a small API or UI change, and describe how to deploy it. Use the results to choose the next employment-focused portfolio task. This assessment has not been performed and is not required for the capstone submission.
