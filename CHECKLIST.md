@@ -25,7 +25,7 @@
 - [x] README reflection covers lessons, challenges, tradeoffs, improvements, and AI assistance.
 - [x] Course requirements reviewed against the implementation and evidence; see [docs/SUBMISSION.md](docs/SUBMISSION.md).
 - [x] Live-demo walkthrough prepared with natural-language input, actual prediction, explanation, and edge cases.
-- [ ] Give the live course demo or include an actual screen recording.
+- [x] Include the completed [screen recording on YouTube (5:45)](https://youtu.be/1mW6WnJn5k4); linked from the README and submission guide.
 - [ ] Submit the public repository link through the course platform.
 
 ## Optional-input revision

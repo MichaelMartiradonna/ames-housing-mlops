@@ -20,7 +20,10 @@ The revised form requires four core facts and accepts ten optional details. It p
 
 This is a historical educational model, not a valuation service. The app has no paid model fallback, ad targeting, CRM, trainer logic, current-price feed, or commercial deployment infrastructure.
 
-The original MLOps write-up and evidence are retained in docs/original-mlops-summary.md and reports/original-mlops. The required reflection is in README.md, and [docs/SUBMISSION.md](docs/SUBMISSION.md) maps course requirements to evidence. Explanation checkpoints and an extra independently written test are optional study activities. An independent skills assessment has not been completed and is not a submission requirement. The remaining course delivery steps are giving or recording the demo and submitting the public repository link.
+The original MLOps write-up and evidence are retained in docs/original-mlops-summary.md and reports/original-mlops. The required reflection is in README.md, and [docs/SUBMISSION.md](docs/SUBMISSION.md) maps course requirements to evidence. The completed [recorded demo (5:45)](https://youtu.be/1mW6WnJn5k4) is linked from the README. The remaining course delivery step is submitting the public repository link through the course platform.
+
+Explanation checkpoints and an extra independently written test are optional study activities. An independent skills assessment has not been completed and is not a submission requirement.
+
 ## Language-model evaluation note
 
 Qwen3.5 4B initially missed or misquoted details in complete descriptions. Those development results are retained in reports/development/qwen3.5-evaluation.json. The selected Qwen3 4B is evaluated in reports/interface_evaluation.json, including its exact downloaded digest and Ollama version.
