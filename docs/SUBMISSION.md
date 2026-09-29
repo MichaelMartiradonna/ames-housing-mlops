@@ -2,7 +2,9 @@
 
 Public repository: https://github.com/MichaelMartiradonna/ames-housing-mlops
 
-The implementation and required documentation are present. A live-demo walkthrough is prepared. Giving the live review demonstration or providing a recording, and submitting the repository link through the course platform, remain delivery steps. A walkthrough document alone is not a completed demonstration.
+Recorded demo: [Ames Home Price Lab Demo — 5:45](https://youtu.be/1mW6WnJn5k4)
+
+The implementation, required documentation, and recorded demonstration are present. The video is hosted as an unlisted YouTube video and linked from the README. Submitting the public repository link through the course platform remains the final delivery step.
 
 ## Data and model quality
 
@@ -43,9 +45,11 @@ The implementation and required documentation are present. A live-demo walkthrou
 
 ## Demo and submission
 
-Follow [docs/DEMO.md](DEMO.md) for a concise demonstration with prepared narration. Show natural-language input, extracted values, the actual prediction and generated explanation, and at least one incomplete or out-of-scope query. Use the native app with Ollama enabled; manual Docker mode alone does not demonstrate the required language workflow.
+Watch the [recorded demonstration (5:45)](https://youtu.be/1mW6WnJn5k4) for the natural-language request, extracted values and defaults, actual prediction and generated explanation, and an out-of-scope Chicago query. The recording uses the native app with Ollama enabled; manual Docker mode alone does not demonstrate the required language workflow.
 
-1. Give the live demonstration during review, or record that walkthrough and supply the recording as directed by the course.
-2. Submit the public repository link above through the course platform.
+The [demo walkthrough](DEMO.md) and [recording script](RECORDING_SCRIPT.md) remain available for a live review or another recording. The walkthrough includes optional examples beyond the recorded demo.
+
+1. Submit the public repository link above through the course platform.
+2. If the platform provides a separate demo-link field, also paste https://youtu.be/1mW6WnJn5k4 there. Otherwise the reviewer can open it from the README.
 
 Explanation quizzes, an extra independently written test, and the employment-focused skills assessment are optional learning activities, not additional course deliverables. No completion or independent-mastery claim is made for those activities.

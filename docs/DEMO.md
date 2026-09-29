@@ -1,5 +1,9 @@
 # Live review walkthrough
 
+**Recorded demo:** [Ames Home Price Lab Demo — 5:45](https://youtu.be/1mW6WnJn5k4).
+
+The completed recording uses the [concise recording script](RECORDING_SCRIPT.md). The walkthrough below also includes optional follow-up, full-input, and missing-information examples for a live review; not every optional example is included in the video.
+
 Allow about five minutes. Start Ollama and the Streamlit app as described in the README. Wait until the app says the local model is ready. The first request after model unloading may take longer.
 
 ## Prepared narration
@@ -45,4 +49,4 @@ Choose **Read home details**. The garage value should change while other known f
 - `pytest tests/ -v`: deterministic tests.
 - `reports/interface_evaluation.json`: actual local-language evaluation, with inputs, outcomes and timings.
 
-A live demonstration during review satisfies the course's demo option. This document is a runbook, not a claim that a recording was made. If recording later, show the actual app and include one successful estimate and at least one incomplete/out-of-scope example.
+The linked recording supplies the course's recorded-demo option. This runbook can also support a live review or a replacement recording showing the actual app, one successful estimate, and at least one incomplete/out-of-scope example.

@@ -4,7 +4,9 @@ A capstone application that turns an ordinary home description into a **reviewab
 
 This educational tool is for learners and reviewers exploring Ames, Iowa sales from **2006–2010**. It makes a trained tabular model accessible through ordinary descriptions and a reviewable form. It is not a current appraisal or an investment tool.
 
-For course review, see the [submission guide and requirement evidence](docs/SUBMISSION.md) and the [live-demo walkthrough](docs/DEMO.md).
+**[Watch the recorded demo on YouTube — 5 minutes 45 seconds](https://youtu.be/1mW6WnJn5k4).** The walkthrough covers a natural-language home description, reviewed inputs and defaults, a model-backed estimate and explanation, and an out-of-scope Chicago request.
+
+For course review, see the [submission guide and requirement evidence](docs/SUBMISSION.md). The [demo walkthrough](docs/DEMO.md) and [recording script](docs/RECORDING_SCRIPT.md) are available to reproduce the demonstration.
 
 [![Validation](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml/badge.svg)](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml)
 

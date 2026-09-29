@@ -112,13 +112,22 @@
   "direct_dependency_versions_pinned": true,
   "readme_reflection_present": true,
   "demo_runbook_and_narration_prepared": true,
-  "demo_recording_created": false,
+  "demo_recording_created": true,
+  "delivery_updated_at": "2026-09-29T18:45:13.9515534Z",
+  "demo_recording": {
+    "url": "https://youtu.be/1mW6WnJn5k4",
+    "title": "Ames Home Price Lab Demo",
+    "duration_seconds": 345,
+    "visibility": "unlisted",
+    "upload_processing_confirmed_by_author": true,
+    "watch_page_and_visibility_verified": true,
+    "full_video_content_independently_reviewed": false
+  },
   "course_review_demo_delivered": false,
   "course_repository_link_submitted": false,
   "optional_learning_exercises_required_by_course": false,
   "independent_skills_assessment_completed": false,
   "remaining_delivery_steps": [
-    "Give the live course demo or supply a recording showing a successful language workflow and an edge case.",
     "Submit the public repository link through the course platform."
   ],
   "deployment_limits": {
