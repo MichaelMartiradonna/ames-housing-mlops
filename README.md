@@ -161,6 +161,8 @@ All five configurations and their test metrics are in [reports/experiment_compar
 
 [reports/interface_evaluation.json](reports/interface_evaluation.json) records actual local-model evaluation. The small development set covers complete descriptions, unit conversion, follow-ups, missing data, ambiguity, contradictions, invalid inputs and scope. It is **not a general accuracy benchmark**: prompts and validation were improved using these cases.
 
+[The focused explanation-wording check](reports/explanation_wording_evaluation.json) reuses six prediction cases after clarifying that 2006–2010 describes the training sales, not a known sale history for the described home. It records unchanged predictions and the real local-model explanations for review; this targeted check is not a new extraction or general-accuracy benchmark.
+
 ### Optional-input tradeoff
 
 The unchanged released model was evaluated on the same **586 validation homes**, masking optional columns and using its existing training-fitted imputers. No retraining or additional test-set evaluation was performed:
