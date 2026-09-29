@@ -151,22 +151,33 @@ class LocalLLM:
 
     def explain(self, price: float, metadata: dict, defaulted: list[str] | None = None) -> Explanation:
         rounded = round(price)
+        input_caveat = (
+            "This estimate uses training defaults for missing optional details. Mention that these "
+            "assumptions may reduce accuracy. Do not attach the full-input test error to this estimate. "
+            if defaulted else
+            "All optional details were supplied; do not claim that this estimate uses defaults. "
+            "Mention that individual errors may exceed the average full-input test error. "
+        )
         system = (
             "Write a concise, plain-English explanation of the supplied trained housing model result. "
             "Return JSON matching the supplied schema. Echo estimate_usd EXACTLY. Include the "
-            "formatted dollar estimate in summary. Summary must be two brief sentences, at most "
+            "supplied summary_opening VERBATIM as the first sentence of summary. "
+            "Summary must be two brief sentences, at most "
             "50 words: give the historical estimate and explain it is a prediction, not an actual "
-            "sale or present appraisal. Put dates and test-error discussion ONLY in limitation, "
-            "not summary. Do not add a Note or repeat yourself. In limitation mention "
-            "Ames and 2006–2010. If optional fields use training defaults, mention that the "
-            "estimate uses defaults for unknown details and may be less accurate. Do not attach "
-            "the full-input test error to that partial-input estimate. Otherwise, mention that "
-            "individual errors may exceed the average test error. "
+            "sale or present appraisal. Describe the price as an estimate based on historical Ames "
+            "sales. The training_data dates describe the dataset, NOT this home's sale history. "
+            "We do not know whether or when this home sold, or its actual sale price. Never state "
+            "or imply that this home sold during the training period or for the estimated price. "
+            "Put dates and test-error discussion ONLY in limitation, not summary. "
+            "Do not add a Note or repeat yourself. In limitation mention the Ames training sales "
+            "from 2006–2010 and the following caveat: " + input_caveat +
             "Do not invent feature contributions, confidence intervals, market trends or advice. "
             "Only discuss the supplied facts. Do not treat MAE or R² as a confidence percentage."
         )
         facts = {"estimate_usd": rounded, "display_estimate": f"${rounded:,}",
-                 "location": "Ames, Iowa", "sale_years": "2006–2010", "model": "Random Forest",
+                 "summary_opening": f"Based on historical Ames sales, the model estimates a sale price of ${rounded:,}.",
+                 "training_data": {"location": "Ames, Iowa", "sale_years": "2006–2010"},
+                 "subject_sale_history_known": False, "model": "Random Forest",
                  "defaulted_optional_fields": defaulted or []}
         if not defaulted:
             facts.update(test_mae_usd=round(metadata["test_metrics"]["mae"]), test_rows=metadata["test_rows"])

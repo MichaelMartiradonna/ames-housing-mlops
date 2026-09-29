@@ -4,6 +4,8 @@
 
 The completed recording uses the [concise recording script](RECORDING_SCRIPT.md). The walkthrough below also includes optional follow-up, full-input, and missing-information examples for a live review; not every optional example is included in the video.
 
+Since recording, generated explanation wording has been clarified to distinguish historical training sales from the described home's unknown sale history. The price model and demonstrated workflow are unchanged.
+
 Allow about five minutes. Start Ollama and the Streamlit app as described in the README. Wait until the app says the local model is ready. The first request after model unloading may take longer.
 
 ## Prepared narration

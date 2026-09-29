@@ -1,0 +1,236 @@
+{
+  "evaluated_at": "2026-09-29T19:08:23.996927+00:00",
+  "base_commit": "a7b0112b06932798d85ee4c9f1e57af11932b848",
+  "llm_source_sha256": "516f80f3c60398e082c144b64eb6327b299267e611ca5a54eeecdf9e1cb00290",
+  "model": "qwen3:4b",
+  "ollama_version": "0.34.1",
+  "model_digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+  "model_run_id": "4de2d93080c849e396f2635627989649",
+  "source_input_report": "reports/interface_evaluation.json",
+  "scope": "Focused live explanation check on the six previously evaluated prediction cases. Inputs are reused; extraction is unchanged and was not rerun. No retraining or model selection.",
+  "independent_accuracy_benchmark": false,
+  "cases": [
+    {
+      "id": "quick_estimate",
+      "features": {
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Gr Liv Area": 1500.0,
+        "Overall Qual": 6.0
+      },
+      "defaulted_optional_fields": [
+        "Garage Cars",
+        "Total Bsmt SF",
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "prediction": 160000.625,
+      "previous_prediction": 160000.625,
+      "explanation": {
+        "estimate_usd": 160001,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $160,001. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "This estimate uses training defaults for missing optional details like Garage Cars, Total Bsmt SF, and others, which may reduce accuracy. The model was trained on Ames sales from 2006\u20132010."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 3.75,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    },
+    {
+      "id": "optional_follow_up",
+      "features": {
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Garage Cars": 2.0,
+        "Total Bsmt SF": 1000.0
+      },
+      "defaulted_optional_fields": [
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "prediction": 160265.625,
+      "previous_prediction": 160265.625,
+      "explanation": {
+        "estimate_usd": 160266,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $160,266. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "This estimate uses training defaults for missing optional details like Full Bath and Bedroom AbvGr, which may reduce accuracy. The model was trained on Ames sales from 2006\u20132010, but this home's sale history is unknown."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 2.58,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    },
+    {
+      "id": "zero_optional",
+      "features": {
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Garage Cars": 0.0,
+        "Total Bsmt SF": 0.0
+      },
+      "defaulted_optional_fields": [
+        "Full Bath",
+        "Bedroom AbvGr",
+        "Lot Area",
+        "Lot Frontage",
+        "House Style",
+        "Bldg Type",
+        "MS Zoning",
+        "Central Air"
+      ],
+      "prediction": 145726.875,
+      "previous_prediction": 145726.875,
+      "explanation": {
+        "estimate_usd": 145727,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $145,727. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "This estimate uses training defaults for missing optional details like Full Bath and Bedroom AbvGr, which may reduce accuracy. The model was trained on Ames sales from 2006\u20132010."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 2.45,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    },
+    {
+      "id": "complete",
+      "features": {
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Gr Liv Area": 1500.0,
+        "Lot Area": 9000.0,
+        "Lot Frontage": 75.0,
+        "Total Bsmt SF": 1000.0,
+        "Bedroom AbvGr": 3.0,
+        "Full Bath": 2.0,
+        "Garage Cars": 2.0,
+        "Neighborhood": "NAmes",
+        "House Style": "1Story",
+        "Bldg Type": "1Fam",
+        "MS Zoning": "RL",
+        "Central Air": "Y"
+      },
+      "defaulted_optional_fields": [],
+      "prediction": 159062.25,
+      "previous_prediction": 159062.25,
+      "explanation": {
+        "estimate_usd": 159062,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $159,062. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "The model was trained on Ames sales from 2006\u20132010. Individual errors may exceed the average full-input test error of $17,765."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 2.58,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    },
+    {
+      "id": "metric_units",
+      "features": {
+        "Year Built": 1960.0,
+        "Overall Qual": 6.0,
+        "Gr Liv Area": 1500.0,
+        "Neighborhood": "NAmes",
+        "MS Zoning": "RL",
+        "Central Air": "Y",
+        "Bedroom AbvGr": 3.0,
+        "Full Bath": 2.0,
+        "Garage Cars": 2.0,
+        "Lot Area": 10890.0,
+        "Lot Frontage": 65.61679790000001,
+        "Total Bsmt SF": 1000.0,
+        "House Style": "1Story",
+        "Bldg Type": "1Fam"
+      },
+      "defaulted_optional_fields": [],
+      "prediction": 162216.5,
+      "previous_prediction": 162216.5,
+      "explanation": {
+        "estimate_usd": 162216,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $162,216. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "The model was trained on Ames sales from 2006\u20132010. Individual errors may exceed the average full-input test error of $17,765."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 2.33,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    },
+    {
+      "id": "follow_up",
+      "features": {
+        "Lot Area": 9000.0,
+        "Lot Frontage": 75.0,
+        "Gr Liv Area": 1500.0,
+        "Overall Qual": 6.0,
+        "Year Built": 1960.0,
+        "Full Bath": 2.0,
+        "Total Bsmt SF": 1000.0,
+        "Bedroom AbvGr": 3.0,
+        "Neighborhood": "NAmes",
+        "House Style": "1Story",
+        "Bldg Type": "1Fam",
+        "MS Zoning": "RL",
+        "Central Air": "Y",
+        "Garage Cars": 3.0
+      },
+      "defaulted_optional_fields": [],
+      "prediction": 159257.25,
+      "previous_prediction": 159257.25,
+      "explanation": {
+        "estimate_usd": 159257,
+        "summary": "Based on historical Ames sales, the model estimates a sale price of $159,257. This is a prediction based on historical data, not an actual sale or present appraisal.",
+        "limitation": "The model was trained on Ames sales from 2006\u20132010. All optional details were supplied; individual errors may exceed the average full-input test error of $17,765."
+      },
+      "checks": {
+        "prediction_unchanged": true,
+        "explanation_matches_prediction": true
+      },
+      "seconds": 2.42,
+      "wording_review": {
+        "no_unsupported_subject_sale_claim": true,
+        "defaults_caveat_matches_inputs": true
+      }
+    }
+  ],
+  "wording_review_method": "Manual review of each captured summary and limitation for unsupported subject sale history and correct use of optional-input caveats. These reviewed development cases do not establish correctness for arbitrary future responses.",
+  "passed": 6,
+  "total": 6
+}
