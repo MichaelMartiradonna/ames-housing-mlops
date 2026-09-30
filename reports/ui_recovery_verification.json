@@ -1,0 +1,45 @@
+{
+  "verified_at": "2026-09-30T17:40:37.822431+00:00",
+  "passed": true,
+  "method": "Streamlit AppTest with real local Ollama parsing, released housing model inference and real Ollama explanation retry. A test-only subclass changes the first explanation request to a nonexistent model, causing an actual HTTP 404. No simulated feature values or price responses.",
+  "prediction": 219776.415,
+  "display_prediction": "$219,776",
+  "features": {
+    "Bedroom AbvGr": 3.0,
+    "Bldg Type": "1Fam",
+    "Central Air": "Y",
+    "Full Bath": 2.0,
+    "Garage Cars": 2.0,
+    "Gr Liv Area": 1850.0,
+    "House Style": "2Story",
+    "Lot Area": 10500.0,
+    "Lot Frontage": 80.0,
+    "MS Zoning": "RL",
+    "Neighborhood": "CollgCr",
+    "Overall Qual": 7.0,
+    "Total Bsmt SF": 900.0,
+    "Year Built": 1998.0
+  },
+  "failure_message": "The selected local model is not installed. Download it with Ollama first.",
+  "retry_explanation": {
+    "estimate_usd": 219776,
+    "summary": "Based on historical Ames sales, the model estimates a sale price of $219,776. This home, built in 1998, has 1,850 sq ft above ground.",
+    "limitation": "The model uses Ames sales from 2006\u20132010. All optional details were supplied; individual errors may exceed the average full-input test error of $17,765."
+  },
+  "same_prediction_id_after_retry": true,
+  "checks": {
+    "real_parsing": true,
+    "real_prediction": true,
+    "price_visible_after_failure": true,
+    "retry_succeeded": true,
+    "no_new_prediction_on_retry": true,
+    "no_ui_exceptions": true
+  },
+  "source_sha256": {
+    "src/app.py": "bc2094624d220121e192a2d1a46b640e5b0f9aa9b96b4393eecaf5e3daa68287",
+    "src/interface.py": "2162bffc30880ac9d4dc00f159c00c051d93d31fdfd0784bf543e017fd58393e",
+    "src/llm.py": "6c052d08c4ac43ddcb97b280b402593e26333fce3d99a5675f24682f5868e40d",
+    "src/workflow.py": "54fcc4954672e77d0fae7258eb7af41d8ae498e286a68b2417d57a3c3fba9d68",
+    "scripts/verify_live_ui.py": "1a7e5218526e82e33873ebfe4debce31a40e3bda9236d7bb69d59abeeef71f46"
+  }
+}

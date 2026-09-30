@@ -1,10 +1,23 @@
 # Ames Home-Price Lab
 
+## For a hiring manager
+
+Describe a home in plain English.\
+A small local language model extracts the details into a form you can check and correct.\
+Missing optional details use clearly labeled defaults from the training data.\
+A saved Random Forest estimates a historical price, and the language model explains the result.\
+The app covers Ames, Iowa sales from 2006–2010 and handles out-of-scope requests, such as a Chicago condo.\
+On 586 held-out Ames homes using all 14 features, average error (MAE) was about **$17,765**.\
+That is about **72% lower error** than a “guess the training median” baseline, whose MAE was **$63,823**.\
+It estimates historical prices—not today’s market value or a professional appraisal.
+
+**[Watch the recorded demo on YouTube — 5 minutes 45 seconds](https://youtu.be/1mW6WnJn5k4).** The recording shows the original course interface. The review/correction upgrade below keeps the same trained price model and scope.
+
+## Project overview
+
 A capstone application that turns an ordinary home description into a **reviewable, model-backed historical price estimate**. A local language model extracts the details; the selected Random Forest predicts the sale price; the language model explains that actual result.
 
 This educational tool is for learners and reviewers exploring Ames, Iowa sales from **2006–2010**. It makes a trained tabular model accessible through ordinary descriptions and a reviewable form. It is not a current appraisal or an investment tool.
-
-**[Watch the recorded demo on YouTube — 5 minutes 45 seconds](https://youtu.be/1mW6WnJn5k4).** The walkthrough covers a natural-language home description, reviewed inputs and defaults, a model-backed estimate and explanation, and an out-of-scope Chicago request.
 
 For course review, see the [submission guide and requirement evidence](docs/SUBMISSION.md). The [demo walkthrough](docs/DEMO.md) and [recording script](docs/RECORDING_SCRIPT.md) are available to reproduce the demonstration.
 
@@ -64,18 +77,50 @@ To use the housing model without Ollama, set `AMES_LLM_ENABLED=false`. This is c
 
 ## Try it
 
-1. Choose **Quick example** (four facts) or **Full example** (all details), then **Read home details**.
-2. Review the extracted fields. Supply missing required details in a follow-up or in the form. Expand **Add optional details** to add what you know and **Review the defaults** to see exactly what unknown details will use.
-3. Check the confirmation box and choose **Confirm & estimate**.
-4. Read the trained model's price and the local language model's explanation.
-5. Try “Actually, it has a 3-car garage.” Review and confirm the changed input.
-6. Try “Estimate the current value of my Chicago condo.” The language layer should explain the scope instead of producing a new estimate.
+1. Choose **Quick example** (four facts) or **Full example** (all details), then **Read my description**. Examples start a new home.
+2. Review each field and its source quote. Supply missing required details in a follow-up or directly in the form. Expand **Optional details** to add what you know and **Review defaults before estimating** to see the exact fallback values.
+3. Check the review box and choose **Confirm details & estimate**. Invalid or unresolved details disable this action and explain what needs attention.
+4. The trained model's price appears first. The local language model then explains that result using the reviewed home details. If that request fails, **Retry explanation** keeps the same price and inputs.
+5. Try “Actually, it has a 3-car garage.” The form shows the old and new values. Review, confirm, and choose **Update estimate**.
+6. Try “Estimate the current value of my Chicago condo.” The app explains its historical Ames scope, removes any previous result, and blocks a new estimate for that request.
 
-Only **above-ground living area, Ames neighborhood, year built, and material/finish quality** are required. The other ten fields are optional. Missing optional values use the saved model's training medians or most frequent categories, displayed before confirmation and alongside the result. They are not facts inferred about this home. Garage capacity and basement area are useful first additions. **Zero means none; blank means unknown.** Invalid supplied values still block prediction. Any field edit clears the prior estimate and confirmation.
+Only **above-ground living area, Ames neighborhood, year built, and material/finish quality** are required. The other ten fields are optional. Missing optional values use the saved model's training medians or most frequent categories, displayed before confirmation and alongside the result. They are not facts inferred about this home. Garage capacity and basement area are useful first additions. **Zero means none; blank means unknown.** Invalid supplied values still block prediction. Field edits reset confirmation and mark the prior estimate as outdated; its input snapshot stays separate from the edited form. An out-of-scope request hides the prior result entirely.
+
+Fields distinguish **From your description**, **Edited by you**, and **Training default**. Source labels describe where a value came from, not a guarantee that it is correct. Ambiguous language requires a reply or explicit **Resolve with the form** action; rejected numeric/category values still need correction. A parsing timeout preserves the description and form for retry. The saved prediction is shown before the explanation request, although Streamlit may remain busy until that request finishes.
 
 Quality is an explicit 1–10 material/finish rating; “nice” is not a measured rating. Bedrooms and full bathrooms refer to those above ground. More details can refine the estimate, but do not guarantee a more accurate result for each home.
 
 A prepared success-and-edge-case walkthrough is in [docs/DEMO.md](docs/DEMO.md).
+
+### Worked example: description → reviewed inputs → saved-model prediction
+
+This fictional College Creek home was checked with the actual local Qwen model and the unchanged released Random Forest. It is a demonstration input, not a claim about a real property's sale history.
+
+<details>
+<summary>Copy the full description used in this example</summary>
+
+> For a historical Ames estimate, the home is in College Creek. It was built in 1998, has 1,850 sq ft of above-ground living area, and an overall material and finish quality of 7 out of 10. It is a two-story single-family detached house with low-density residential zoning and central air. It has a 2-car garage, 900 sq ft of basement area, 2 above-ground full bathrooms, 3 above-ground bedrooms, a 10,500 sq ft lot, and 80 ft of street frontage.
+
+</details>
+
+The language model extracts facts and quotes their source. For example:
+
+| Text in the description | Model feature | Reviewed value |
+| --- | --- | --- |
+| “College Creek” | `Neighborhood` | `CollgCr` (College Creek) |
+| “built in 1998” | `Year Built` | 1998 |
+| “1,850 sq ft of above-ground living area” | `Gr Liv Area` | 1850 |
+| “quality of 7 out of 10” | `Overall Qual` | 7 |
+
+![Actual review screen showing the extracted values and their source text](docs/images/review-sources.jpg)
+
+All fourteen facts were supplied, so this example uses **no optional defaults**. After confirmation, the saved pipeline returns **$219,776.415**, displayed as **$219,776**. The local language model receives that prediction and the confirmed facts to write its explanation; it does not choose the price.
+
+![Actual historical estimate and local language explanation for the College Creek example](docs/images/historical-estimate.jpg)
+
+A follow-up—“Correction: the garage fits one car, not two cars.”—changes only `Garage Cars` from 2 to 1. The form shows the change, resets confirmation, and labels the old result as a previous estimate. Confirming the correction gives **$219,137.915** (displayed as **$219,138**). That is a change in model output, not a causal estimate of a garage's market value.
+
+The [live workflow report](reports/workflow_evaluation.json) includes the descriptions, extracted values, source quotes, defaults, predictions, explanations, local model identity, source hashes and checks. It includes quick/full descriptions, corrections, ambiguity, zero versus unknown, Chicago scope handling, and an explanation failure followed by recovery. The failure is deliberately induced by asking the real local Ollama server for a nonexistent model, then retrying with the installed model. It does not measure a spontaneous failure rate.
 
 ## Architecture
 
@@ -87,22 +132,38 @@ flowchart LR
     D --> E[User reviews and confirms]
     E --> F[Saved preprocessing + Random Forest]
     F --> G[Actual historical price estimate]
-    G --> H[Local language explanation]
-    H --> I[Streamlit result and limitations]
+    G --> I[Visible price and reviewed input snapshot]
+    G --> H[Local language explanation using confirmed facts]
+    H --> J[Explanation or retry without changing the price]
 ~~~
 
 - `src/interface.py`: feature contract, unit conversion, validation, conversation updates.
 - `src/llm.py`: local requests, schema output, validation, timeouts, safe errors.
 - `src/serving.py`: checksum-verified model retrieval and inference.
 - `src/app.py`: Streamlit UI; `app/streamlit_app.py` is the deployment entry point.
+- `src/workflow.py`: source tracking, corrections, immutable prediction snapshots and recovery state.
 - `src/train.py`, `src/run_experiments.py`, `src/compare_experiments.py`: training, tracking and model selection.
 - `src/export_model.py`: exports the actual MLflow winner and checks parity on all test rows.
 - `src/evaluate_interface.py`: live language evaluation, separate from offline tests.
+- `src/evaluate_workflow.py`: real local-model checks of the revised review/correction flow, including fresh examples and an induced explanation outage.
 - `src/evaluate_optional_inputs.py`: reproducible validation-only comparison of missing-input policies.
 
-Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Exact known category display labels are converted to their dataset codes; there is no fuzzy category guessing. Units must occur in the supporting quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block readiness and remove stale values. Missing required facts or ambiguous supplied facts require clarification; absent optional facts do not. The bounded second extraction pass only contributes missing fields and cannot overwrite accepted values.
+Code rejects unsupported features, nonfinite values, unknown categories, out-of-range measurements and fractional room counts. Neighborhood codes are resolved against an exact, unique name/code in the supporting quote; North Ames cannot silently become Northwest Ames. Other categories require recognizable supporting phrases. There is no fuzzy category guessing. Units must occur in the quote; conversions happen in Python. Quotes accept only whitespace and thousands-separator differences. Duplicate updates block readiness and remove stale values. Missing required facts or ambiguous supplied facts require clarification; absent optional facts do not. The bounded second extraction pass only revisits missing fields with recognizable mentions in the text and cannot overwrite accepted values. This cue filter can miss unusual phrasing; the editable form remains the fallback.
 
 These checks cannot prove semantic correctness of every extraction. The user therefore confirms the supplied details and listed defaults. Language failures never substitute a fabricated price. Explanations must echo the actual rounded estimate. The UI renders the historical scope and statistical caveat from trusted metadata; it does not rely on the language model's wording of prediction error. Partial-input explanations do not receive the full-input test MAE as their accuracy claim.
+
+### Saved-model inference: load, then predict
+
+The application does **not** reconstruct or refit a model to answer a request. `src/serving.py::load_serving_model()` verifies the released `model.skops` checksum and loads the fitted preprocessing + Random Forest pipeline with `skops.io.load`. Streamlit caches that resource. After review, `src/serving.py::predict()` validates the inputs, creates one input row, and calls `model.predict(...)`. Training and MLflow export are separate offline steps; inference does not require the dataset or MLflow database.
+
+~~~python
+from src.serving import load_serving_model, predict
+
+model, metadata = load_serving_model()
+price = predict(model, metadata, confirmed_features)
+~~~
+
+`confirmed_features` is the reviewed dictionary shown in the app. Its absent optional values are filled by the saved pipeline's training-fitted imputers. **See the details behind this estimate** displays the effective values after those defaults, before scaling and encoding.
 
 ## Dataset and preprocessing
 
@@ -159,6 +220,20 @@ Test MAE is about 72% lower than that simple baseline. Some other configurations
 
 All five configurations and their test metrics are in [reports/experiment_comparison.csv](reports/experiment_comparison.csv). [reports/experiment_summary.json](reports/experiment_summary.json) records data/split evidence; [configs/model_release.json](configs/model_release.json) identifies the selected run, checksum and training categories.
 
+### Five logged MLflow runs
+
+This compact view comes from the persisted MLflow comparison export, sorted by **validation MAE**. Run IDs are abbreviated here; the linked CSV contains their full identifiers, batch ID, parameters and all six validation/test metrics. All five runs belong to batch `20260917T162056Z-9d6991ad`.
+
+| Run / configuration | Trees / max depth / min leaf | Validation MAE | Test MAE | Test RMSE | Test R² |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `4de2d930` · **rf_200_full (selected)** | 200 / unlimited / 1 | $16,639 | $17,765 | $30,245 | 0.886 |
+| `3d7ee7ae` · rf_100_full | 100 / unlimited / 1 | $16,696 | $17,868 | $30,294 | 0.886 |
+| `4594a6b0` · rf_200_depth12_leaf2 | 200 / 12 / 2 | $16,721 | $17,624 | $29,959 | 0.888 |
+| `76c33a8d` · rf_200_leaf3 | 200 / unlimited / 3 | $16,809 | $17,752 | $29,360 | 0.892 |
+| `cfa25b65` · rf_100_depth6 | 100 / 6 / 1 | $18,242 | $19,724 | $32,845 | 0.865 |
+
+These are actual logged runs queried by `mlflow.search_runs()` in [the comparison script](src/compare_experiments.py), not hypothetical configurations. The original validation-selected winner is retained; no new training was performed for the interface upgrade.
+
 [reports/interface_evaluation.json](reports/interface_evaluation.json) records actual local-model evaluation. The small development set covers complete descriptions, unit conversion, follow-ups, missing data, ambiguity, contradictions, invalid inputs and scope. It is **not a general accuracy benchmark**: prompts and validation were improved using these cases.
 
 [The focused explanation-wording check](reports/explanation_wording_evaluation.json) reuses six prediction cases after clarifying that 2006–2010 describes the training sales, not a known sale history for the described home. It records unchanged predictions and the real local-model explanations for review; this targeted check is not a new extraction or general-accuracy benchmark.
@@ -180,17 +255,23 @@ This development comparison informed the input policy. It is not independent tes
 ~~~bash
 pytest tests/ -v
 python -m src.evaluate_interface
+python -m src.evaluate_workflow
+python scripts/verify_live_ui.py
 ~~~
 
 The first command runs deterministic tests for preprocessing, actual model shape/performance, artifact reload, validation, HTTP failures, explanation consistency, and UI confirmation/reset. Transport responses are mocked in unit tests; those tests do not measure language accuracy.
 
-The second requires the real local model and evaluates actual extraction, housing inference and explanations. It is separate because hardware availability and latency should not make ordinary CI unreliable. No paid calls are made.
+The second requires the real local model and evaluates actual extraction, housing inference and explanations. The third also checks the review/correction state, stale estimates, field sources and explanation recovery, with additional fresh descriptions. They are separate because hardware availability and latency should not make ordinary CI unreliable. The fourth command uses Streamlit AppTest with real local parsing and prediction, induces a real Ollama explanation error, then verifies that the retry preserves the price and reviewed inputs. No paid calls are made.
 
-GitHub Actions runs the tests, gated training, and a container build with health and actual released-model prediction checks. See the [workflow](.github/workflows/mlops.yml) and [verification checklist](CHECKLIST.md) for current status.
+The revised workflow's development report is [reports/workflow_evaluation.json](reports/workflow_evaluation.json). The [first pass](reports/development/workflow-first-pass.json) is preserved: it exposed neighborhood-code mix-ups and unsupported optional guesses. Exact category grounding and restricting the optional second pass addressed those failures. These cases informed the implementation, so they are development regression evidence—not an independent language-accuracy benchmark.
+
+GitHub Actions runs the tests, gated training, and a container build. The container job checks health, actual released-model predictions, and the manual Streamlit confirmation/correction flow, then saves a JSON report. See the [workflow](.github/workflows/mlops.yml), [latest check results](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml), and [verification checklist](CHECKLIST.md).
 
 ## Docker
 
-The current app image was built and verified locally on Docker Desktop 4.91.0 / Engine 29.8.0. The container's health check passed, the full example returned **$159,062.25**, and the four-field example returned **$160,000.625**, matching native inference. The browser displayed **$160,001** after confirming the four inputs and ten defaults. See the [step-by-step Docker walkthrough](docs/DOCKER_WALKTHROUGH.md) and [verification evidence](reports/docker_verification.json). This check used manual mode; the full Ollama Compose stack remains a separate, unverified deployment path.
+The review/correction upgrade was rebuilt and verified on Docker Desktop 4.91.0 / Engine 29.8.0. The Linux container passed health, dependency, source-file parity, real-model inference, and manual Streamlit review/correction checks. The original full example returned **$159,062.25**, and the four-field example returned **$160,000.625**, matching native inference. The container check also verified confirmation, outdated estimates, invalid optional values, and zero versus unknown. See the [Docker walkthrough](docs/DOCKER_WALKTHROUGH.md) and [current verification report](reports/docker_verification.json). [Earlier course-version evidence](reports/development/course-docker-verification.json) is preserved separately.
+
+The Docker app was also checked in the browser using native Ollama through Docker Desktop's `host.docker.internal` connection. The worked College Creek description filled all fourteen fields, returned **$219,776**, and produced a real local-language explanation. This reuses the existing Qwen installation; the separate all-container Ollama Compose stack remains unverified.
 
 Build and launch manual mode:
 
@@ -241,8 +322,8 @@ This extends an earlier Ames MLOps assignment. DVC integrity checks, MLflow, per
 
 Earlier evidence is preserved under [reports/original-mlops](reports/original-mlops) and the [original write-up](docs/original-mlops-readme.md). Its old counts, metrics, screenshots and workflow URLs describe that version, not verification of the capstone interface.
 
-The current version has **61 passing automated tests** and **16/16 passing live language development cases**. The suite covers partial-input prediction, exact default parity, invalid optional fields, zero versus unknown, and confirmation-reset checks. Current verification is recorded in reports/verification.json. These development cases informed implementation and are not independent evidence of general language accuracy. The original required-14-field version's language report is preserved in reports/development/required-14-interface-evaluation.json. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.
+The current interface has **83 passing automated tests** and **25/25 passing live workflow development cases**, plus a [real-model UI recovery check](reports/ui_recovery_verification.json). The [portfolio-interface verification report](reports/workflow_verification.json) records the current source hashes and checks. The original course version had 61 tests and 16/16 live development cases; its evidence is preserved below. The suite covers partial-input prediction, exact default parity, invalid optional fields, zero versus unknown, and confirmation-reset checks. Original course verification is recorded in reports/verification.json. These development cases informed implementation and are not independent evidence of general language accuracy. The original required-14-field version's language report is preserved in reports/development/required-14-interface-evaluation.json. Qwen3 4B was selected after comparing it with Qwen3.5 4B; the earlier results are retained in reports/development.
 
-A [successful optional-input CI run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912) verifies all 61 tests, gated training, Docker build, app health, and actual model inference inside the container. See reports/verification.json for the tested source revision and separate local evidence. The earlier Windows Docker startup issue is no longer present; the current app has also been built and verified locally in a Linux container. Earlier capstone CI evidence remains in reports/development/required-14-verification.json.
+A [successful course-version CI run](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912) verified its 61 tests, gated training, Docker build, app health, and actual model inference inside the container. See reports/verification.json for that tested source revision and separate local evidence. The earlier Windows Docker startup issue was resolved for that version. Earlier capstone CI evidence remains in reports/development/required-14-verification.json.
 
 Retraining and export update the local artifact and release manifest. To distribute a newly trained artifact, publish a new model-release version and update the manifest URL/checksum together. Do not point a new checksum at an older release file. If validation selects a different configuration, review that comparison before updating model.selected_experiment in the YAML.

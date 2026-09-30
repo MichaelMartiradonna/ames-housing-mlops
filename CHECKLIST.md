@@ -26,7 +26,7 @@
 - [x] Course requirements reviewed against the implementation and evidence; see [docs/SUBMISSION.md](docs/SUBMISSION.md).
 - [x] Live-demo walkthrough prepared with natural-language input, actual prediction, explanation, and edge cases.
 - [x] Include the completed [screen recording on YouTube (5:45)](https://youtu.be/1mW6WnJn5k4); linked from the README and submission guide.
-- [ ] Submit the public repository link through the course platform.
+- [x] Submitted and approved: 91/100 including the Docker bonus (Excellent), per reviewer feedback.
 
 ## Optional-input revision
 
@@ -39,6 +39,19 @@
 - [x] Local Docker engine, current app build, health, actual model predictions, and browser manual workflow verified.
 - [x] Publish the reviewed changes in [PR #2](https://github.com/MichaelMartiradonna/ames-housing-mlops/pull/2); [GitHub tests, training and container checks passed](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/runs/35263928912) for the updated application.
 
-The earlier Windows Docker startup issue is no longer present. Local verification on Docker Desktop 4.91.0 / Engine 29.8.0 passed for the current app in manual mode. See [reports/docker_verification.json](reports/docker_verification.json) for source hashes and results, and [docs/DOCKER_WALKTHROUGH.md](docs/DOCKER_WALKTHROUGH.md) to repeat the steps. The full Ollama Compose stack remains unverified; the native app provides the tested natural-language workflow.
+The optional-input course version passed Docker verification. Its evidence is preserved in [reports/development/course-docker-verification.json](reports/development/course-docker-verification.json).
+
+## Portfolio interface revision
+
+- [x] Sources and quoted evidence visible beside extracted fields; readable category names.
+- [x] Corrections preserve unrelated inputs, reset confirmation, and mark the old estimate as outdated.
+- [x] Price renders before the explanation; an explanation retry preserves the prediction.
+- [x] 83 automated tests and 25/25 real local-model development cases passed, including fresh examples and controlled explanation failure/recovery.
+- [x] README hiring-manager introduction, worked example/screenshots, five experiment rows, and explicit saved-model inference path.
+- [x] Rebuilt Linux image: health, source-file parity, real released-model predictions, and manual review/correction checks passed.
+- [x] Docker browser flow with native Ollama: all fourteen details extracted, confirmed estimate of $219,776, and actual language explanation displayed.
+- [x] GitHub's container job now runs the same repeatable check and saves its JSON evidence.
+
+See [reports/workflow_verification.json](reports/workflow_verification.json), [reports/docker_verification.json](reports/docker_verification.json), and the [Docker walkthrough](docs/DOCKER_WALKTHROUGH.md). The complete separate Ollama Compose stack remains unverified. Current remote check results are available in [GitHub Actions](https://github.com/MichaelMartiradonna/ames-housing-mlops/actions/workflows/mlops.yml).
 
 A full hosted language demo is not part of the chosen no-payment local model setup. Earlier MLOps verification remains in reports/original-mlops and is not evidence for the new interface. Guided explanation questions and an extra independently written test are optional learning activities, not requirements in the supplied course rubric. They do not block submission. The separate independent skills assessment remains a possible activity after submission; it has not been completed.

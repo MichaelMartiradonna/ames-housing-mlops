@@ -1,0 +1,88 @@
+{
+  "verified_at": "2026-09-30T17:41:34.771285+00:00",
+  "scope": "Local review/correction interface upgrade. No retraining, GitHub publication, new remote CI run or new Docker verification in this check.",
+  "base_commit": "486ed37f2e75be625d8c4289e29b5a0219ce90c0",
+  "branch": "improve-reviewed-estimates",
+  "tested_working_tree": true,
+  "source_sha256": {
+    "src/app.py": "bc2094624d220121e192a2d1a46b640e5b0f9aa9b96b4393eecaf5e3daa68287",
+    "src/interface.py": "2162bffc30880ac9d4dc00f159c00c051d93d31fdfd0784bf543e017fd58393e",
+    "src/llm.py": "6c052d08c4ac43ddcb97b280b402593e26333fce3d99a5675f24682f5868e40d",
+    "src/workflow.py": "54fcc4954672e77d0fae7258eb7af41d8ae498e286a68b2417d57a3c3fba9d68",
+    "src/evaluate_workflow.py": "49b4013e9ee39a580991fea6cb1800e3dfe705047ab31de2eb7253bb627a5bac",
+    "scripts/verify_live_ui.py": "1a7e5218526e82e33873ebfe4debce31a40e3bda9236d7bb69d59abeeef71f46"
+  },
+  "automated_tests": {
+    "command": "pytest tests/ -q --junitxml=artifacts/workflow-tests.xml",
+    "tests": 83,
+    "passed": 83,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 55.567,
+    "started_at": "2026-09-30T12:35:25.025933-05:00",
+    "warnings": "10 existing dependency deprecation warnings",
+    "junit_sha256": "076cde22ff7fe704337a365580f0530acb48c76bc8dca95f37f38a233667fd12"
+  },
+  "live_workflow": {
+    "report": "reports/workflow_evaluation.json",
+    "report_sha256": "c60752e2049c1bc877c78ac29954f7235bc976bd3966af734503a54c9cbea1ca",
+    "passed": 25,
+    "total": 25,
+    "existing_regression_cases": 16,
+    "new_cases_this_iteration": 9,
+    "model": "qwen3:4b",
+    "ollama_version": "0.34.1",
+    "llm_digest": "359d7dd4bcdab3d86b87d73ac27966f4dbb9f5efdfcc75d34a8764a09474fae7",
+    "coverage": [
+      "quick description",
+      "full description",
+      "follow-up correction",
+      "ambiguous input",
+      "zero versus unknown",
+      "Chicago scope refusal",
+      "explanation failure and retry"
+    ],
+    "qualification": "Development regression cases, including fresh wording. Cases informed fixes; not an independent estimate of general language accuracy. Explanation failure deliberately induced with a nonexistent model against real Ollama."
+  },
+  "real_model_ui_recovery": {
+    "report": "reports/ui_recovery_verification.json",
+    "report_sha256": "3773fd114485c9e362c686bf49b9c1665bd8fa97ad4e00af92764d736bc92dcd",
+    "passed": true,
+    "checks": {
+      "real_parsing": true,
+      "real_prediction": true,
+      "price_visible_after_failure": true,
+      "retry_succeeded": true,
+      "no_new_prediction_on_retry": true,
+      "no_ui_exceptions": true
+    },
+    "method": "Streamlit AppTest with real local Ollama parsing, released housing model inference and real Ollama explanation retry. A test-only subclass changes the first explanation request to a nonexistent model, causing an actual HTTP 404. No simulated feature values or price responses."
+  },
+  "browser_checks": {
+    "method": "Interactive local-browser checks with actual Ollama and released housing pipeline",
+    "quick_example": "Four required fields and ten disclosed defaults; displayed $160,001",
+    "fresh_full_example": "All fourteen inputs supplied with source quotes; displayed $219,776",
+    "price_before_explanation": "Browser snapshot captured the saved price while the explanation request was still running, before the generated summary appeared",
+    "correction": "Garage capacity 2 to 1 displayed explicitly, other details retained, confirmation reset, previous estimate marked outdated; reconfirmed price $219,138",
+    "chicago_after_estimate": "Visible scope refusal, previous price removed, confirmation and estimate disabled",
+    "responsive_layout": "Visually checked at 1280x720 and 752x912; outer columns stack at the narrower size",
+    "screenshots": {
+      "docs/images/review-sources.jpg": "189231e4595b656e33cf2ffcf2cd87f0a64de123487e7ba6f4e7102e932ccb2a",
+      "docs/images/historical-estimate.jpg": "00bf849601417cb673478d9eba317a0e62226d939ede201adce955e3a3ce6356"
+    }
+  },
+  "housing_model": {
+    "run_id": "4de2d93080c849e396f2635627989649",
+    "sha256": "f35e3008e290778d9d422406569daef6fb7e145913749048b8cc048fecf5f9a4",
+    "unchanged_release": "capstone-model-v1",
+    "retrained": false,
+    "inference": "Load verified saved preprocessing/Random Forest pipeline and call predict; no fitting in the app."
+  },
+  "limits": [
+    "This report records initial native verification. Subsequent Docker checks are recorded in reports/docker_verification.json; remote checks are recorded by GitHub Actions.",
+    "Cold loading and long descriptions may take noticeably longer on older hardware.",
+    "Structured extraction and quote checks cannot guarantee correct language understanding; user review remains necessary."
+  ],
+  "deployment_follow_up_report": "reports/docker_verification.json"
+}

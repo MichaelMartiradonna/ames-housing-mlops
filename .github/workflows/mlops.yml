@@ -91,7 +91,14 @@ jobs:
             sleep 2
           done
           curl --fail http://127.0.0.1:8501/_stcore/health
-          docker exec ames-ci python -c "from src.serving import load_serving_model,predict; from src.interface import SAMPLE_FEATURES; m,meta=load_serving_model(); p=predict(m,meta,SAMPLE_FEATURES); assert 10000 < p < 1000000; print('Released model prediction:',p)"
+          docker exec -i ames-ci python < scripts/verify_container.py > container-verification.json
+          cat container-verification.json
+      - name: Preserve container verification
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: container-verification
+          path: container-verification.json
       - name: Container logs
         if: always()
         run: docker logs ames-ci || true
