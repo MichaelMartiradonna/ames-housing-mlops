@@ -4,9 +4,9 @@
 
 The completed recording uses the [concise recording script](RECORDING_SCRIPT.md). The walkthrough below also includes optional follow-up, full-input, and missing-information examples for a live review; not every optional example is included in the video.
 
-Since recording, generated explanation wording has been clarified to distinguish historical training sales from the described home's unknown sale history. The price model and demonstrated workflow are unchanged.
+Since recording, the interface now shows extraction sources, tracks corrections, marks previous estimates as outdated, and displays the price before generating its explanation. The saved price model, historical scope, and original course results are unchanged. This runbook uses the updated interface; the linked recording remains the original course demonstration.
 
-Allow about five minutes. Start Ollama and the Streamlit app as described in the README. Wait until the app says the local model is ready. The first request after model unloading may take longer.
+Allow about five minutes. Start Ollama and the Streamlit app as described in the README. Wait until the app says the local language model is available. The first request after model unloading may take longer.
 
 ## Prepared narration
 
@@ -23,10 +23,10 @@ Use these concise notes alongside the actions below; adapt them as needed.
 
 1. Open **Explore a home** and select **Quick example**.
 2. Read the description aloud: it supplies neighborhood, above-ground living area, year built and material/finish quality.
-3. Choose **Read home details**. Explain that Qwen runs locally and extracts structured input; it does not set the price.
-4. Review the four required fields. Expand **Review the defaults** to show exactly which unknown optional details use training medians or modes. Explain that these are not facts about this home. If a required field is missed, show the clarification workflow.
-5. Check the review confirmation and choose **Confirm & estimate**.
-6. Show the predicted dollar amount and the generated explanation. Open **Details used for this estimate**.
+3. Choose **Read my description**. Explain that Qwen runs locally and extracts structured input; it does not set the price.
+4. Review the four required fields. Expand **Review defaults before estimating** to show exactly which unknown optional details use training medians or modes. Explain that these are not facts about this home. If a required field is missed, show the clarification workflow.
+5. Check the review confirmation and choose **Confirm details & estimate**.
+6. Show the predicted dollar amount and the generated explanation. Open **See the details behind this estimate**.
 7. Explain that the complete saved Random Forest pipeline generated the number, including training-fitted imputation, scaling and encoding. The published full-input test error is not the error estimate for this partial-input home.
 8. Optionally start a new home and choose **Full example** to show the original all-details workflow with no optional defaults.
 
@@ -34,7 +34,7 @@ Use these concise notes alongside the actions below; adapt them as needed.
 
 Enter: **Actually, it has a 3-car garage.**
 
-Choose **Read home details**. The garage value should change while other known fields remain; its default should disappear. The earlier result is cleared and confirmation resets. Review and estimate again. A change in model output is not proof of the causal value of adding a garage. Entering 0 means no garage, while leaving it blank means unknown.
+Choose **Read my description**. The garage value should change while other known fields remain; its default should disappear. The earlier result is marked as a previous estimate, and confirmation resets. The form shows the source of the correction and the old/new garage value. Review, confirm, and choose **Update estimate**. A change in model output is not proof of the causal value of adding a garage. Entering 0 means no garage, while leaving it blank means unknown.
 
 ## Missing information and scope
 

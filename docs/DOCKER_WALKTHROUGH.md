@@ -45,7 +45,15 @@ Open [the Docker app](http://127.0.0.1:8502/). To verify the short manual form, 
 - Year built: **1960**.
 - Material and finish quality: **6**.
 
-Leave the optional details unknown, review the ten defaults, check the confirmation box and choose **Confirm & estimate**. Expect approximately **$160,001**. This differs from the full example because its unknown details use training defaults. The description buttons do not invoke the language assistant in manual mode.
+Leave the optional details unknown, review the ten defaults, check the confirmation box and choose **Confirm details & estimate**. Expect approximately **$160,001**. This differs from the full example because its unknown details use training defaults. The description buttons do not invoke the language assistant in manual mode.
+
+Run the repeatable container check from the project folder:
+
+```powershell
+Get-Content -Raw scripts/verify_container.py | docker exec -i ames-capstone-local python -
+```
+
+It checks the health endpoint, actual released-model predictions, and Streamlit's manual review flow inside the Linux image. It verifies confirmation, correction of an existing estimate, zero versus unknown, and rejection of an invalid optional value. It uses the real saved model, with no mock predictions or extra test dependencies. GitHub Actions runs the same check and saves its JSON report.
 
 ## 5. Stop or resume the app
 
@@ -56,4 +64,19 @@ docker start ames-capstone-local
 
 Stopping preserves this container and its downloaded housing model. Rebuilding an image does not update an already-created container; create a new container from the rebuilt image when testing later code changes.
 
-The optional `docker compose up --build` setup also puts Ollama in Docker, downloads a separate copy of Qwen, and uses CPU inference by default. That is a separate deployment path; success with this walkthrough does not establish that the full Compose stack has been tested.
+## 6. Use your existing local Ollama with the Docker app
+
+On Docker Desktop, the app can use an already-running native Ollama server through `host.docker.internal`. This keeps the existing Qwen download and native GPU support. Start Ollama and make sure `qwen3:4b` is installed. Stop the manual container first if it is using port 8502, then create the language-enabled app:
+
+```powershell
+docker stop ames-capstone-local
+docker run -d --name ames-capstone-language -p 127.0.0.1:8502:8501 -e AMES_LLM_ENABLED=true -e OLLAMA_BASE_URL=http://host.docker.internal:11434 -e OLLAMA_MODEL=qwen3:4b -e AMES_LLM_TIMEOUT_SECONDS=300 ames-capstone:local
+```
+
+Open the app on port 8502 and follow the description, review, and estimate steps. The first language request may include model loading. This connection uses Docker Desktop's host routing; it does not require changing Ollama's public listening address or opening a firewall port.
+
+The portfolio revision was verified this way with the README's full College Creek description: all fourteen fields were extracted, the confirmed price was **$219,776**, and Qwen explained that saved prediction.
+
+![Verified Docker app with the worked example and actual local-language explanation](images/docker-estimate.jpg)
+
+The optional `docker compose up --build` setup also puts Ollama in Docker, downloads a separate copy of Qwen, and uses CPU inference by default. It uses host port 8501, so stop the native Streamlit app on that port first. Compose configuration is validated, but running the app with native Ollama does not establish that the full Compose stack has been tested.

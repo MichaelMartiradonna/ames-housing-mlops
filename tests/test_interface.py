@@ -225,7 +225,7 @@ def test_second_pass_cannot_overwrite_already_valid_fields(categories):
             "intent": "estimate", "updates": updates, "question": ""
         })}})
     client = LocalLLM(Settings(), transport=httpx.MockTransport(handler))
-    result = client.parse("It was built in 1960.", {}, categories)
+    result = client.parse("It was built in 1960 and has a 2-car garage.", {}, categories)
     assert len(calls) == 2
     assert result.features["Year Built"] == 1960
     assert not result.ready
@@ -250,3 +250,125 @@ def test_scope_gate_blocks_stale_complete_home_before_extraction(categories):
     assert not result.ready
     assert "2006" in result.question
     assert len(calls) == 1
+
+
+def test_explicit_unknown_clears_a_known_optional_value(categories):
+    review = review_extraction(extraction([
+        {"name": "Garage Cars", "value": None, "unit": "none", "evidence": "garage capacity is unknown"}
+    ]), "Actually the garage capacity is unknown.", SAMPLE_FEATURES, categories)
+    assert review.ready
+    assert "Garage Cars" not in review.features
+    assert "Garage Cars" in review.defaulted
+    assert review.touched == ["Garage Cars"]
+    assert review.evidence == {}
+
+
+def test_clearing_without_explicit_unknown_is_rejected(categories):
+    review = review_extraction(extraction([
+        {"name": "Garage Cars", "value": None, "unit": "none", "evidence": "a two-car garage"}
+    ]), "It has a two-car garage.", SAMPLE_FEATURES, categories)
+    assert not review.ready
+    assert "Garage Cars" in review.field_issues
+
+
+def test_evidence_records_stated_unit_and_validated_conversion(categories):
+    review = review_extraction(extraction([
+        {"name": "Lot Area", "value": .25, "unit": "acres", "evidence": "0.25 acres"}
+    ]), "The lot is 0.25 acres.", SAMPLE_FEATURES, categories)
+    assert review.features["Lot Area"] == 10890
+    assert review.evidence["Lot Area"] == {"quote": "0.25 acres", "stated_value": .25, "unit": "acres"}
+
+
+def test_partial_explanation_receives_supplied_facts_without_full_input_mae():
+    def handler(request):
+        facts = json.loads(json.loads(request.content)["messages"][1]["content"])
+        assert facts["home_details"]["Ames neighborhood"] == "North Ames"
+        assert "test_mae_usd" not in facts
+        return httpx.Response(200, json={"done": True, "message": {"content": json.dumps({
+            "estimate_usd": 150000, "summary": "The historical estimate for this North Ames home is $150,000.",
+            "limitation": "Unknown optional details use training defaults."
+        })}})
+    client = LocalLLM(Settings(), transport=httpx.MockTransport(handler))
+    result = client.explain(150000, {}, ["Garage Cars"], {"Neighborhood": "NAmes"})
+    assert result.estimate_usd == 150000
+
+
+def test_neighborhood_uses_exact_quoted_name_not_a_conflicting_model_code(categories):
+    review = review_extraction(extraction([
+        {"name": "Neighborhood", "value": "NWAmes", "unit": "none", "evidence": "North Ames"}
+    ]), "A home in North Ames.", SAMPLE_FEATURES, categories)
+    assert review.features["Neighborhood"] == "NAmes"
+    assert review.ready
+
+
+def test_two_quoted_neighborhoods_require_clarification(categories):
+    review = review_extraction(extraction([
+        {"name": "Neighborhood", "value": "NAmes", "unit": "none", "evidence": "North Ames or Northwest Ames"}
+    ]), "North Ames or Northwest Ames", SAMPLE_FEATURES, categories)
+    assert "Neighborhood" not in review.features
+    assert not review.ready
+
+
+def test_generic_home_description_cannot_establish_style_or_building_type(categories):
+    review = review_extraction(extraction([
+        {"name": "House Style", "value": "1Story", "unit": "none", "evidence": "a lovely home"},
+        {"name": "Bldg Type", "value": "1Fam", "unit": "none", "evidence": "a lovely home"},
+    ]), "A lovely home", {}, categories)
+    assert review.features == {}
+    assert set(review.field_issues) == {"House Style", "Bldg Type"}
+
+
+def test_negative_central_air_cannot_be_labeled_yes(categories):
+    review = review_extraction(extraction([
+        {"name": "Central Air", "value": "Y", "unit": "none", "evidence": "no central air"}
+    ]), "There is no central air.", SAMPLE_FEATURES, categories)
+    assert "Central Air" not in review.features
+    assert not review.ready
+
+
+def test_missing_optional_fields_do_not_trigger_unnecessary_repair(categories):
+    from src.interface import QUICK_QUERY
+    calls = []
+    updates = [
+        {"name": "Neighborhood", "value": "NAmes", "unit": "none", "evidence": "North Ames"},
+        {"name": "Year Built", "value": 1960, "unit": "none", "evidence": "built in 1960"},
+        {"name": "Gr Liv Area", "value": 1500, "unit": "sq_ft", "evidence": "1,500 sq ft"},
+        {"name": "Overall Qual", "value": 6, "unit": "none", "evidence": "quality 6 out of 10"},
+    ]
+    def handler(request):
+        calls.append(request)
+        body = json.loads(request.content)
+        answer = {"kind": "housing"} if body["format"].get("title") == "Scope" else {
+            "intent": "estimate", "updates": updates, "question": ""}
+        return httpx.Response(200, json={"done": True, "message": {"content": json.dumps(answer)}})
+    result = LocalLLM(Settings(), transport=httpx.MockTransport(handler)).parse(QUICK_QUERY, {}, categories)
+    assert result.ready and len(result.defaulted) == 10
+    assert len(calls) == 2  # Scope + extraction, with no speculative optional-field pass.
+
+
+def test_no_garage_cannot_establish_central_air_status(categories):
+    from src.interface import mentioned_fields
+    assert mentioned_fields("There is no garage.", ["Central Air"], categories) == []
+    review = review_extraction(extraction([
+        {"name": "Central Air", "value": "N", "unit": "none", "evidence": "no garage"}
+    ]), "There is no garage.", SAMPLE_FEATURES, categories)
+    assert "Central Air" not in review.features
+    assert not review.ready
+
+
+def test_second_pass_clarification_blocks_even_without_any_updates(categories):
+    extraction_calls = []
+    def handler(request):
+        body = json.loads(request.content)
+        if body["format"].get("title") == "Scope":
+            answer = {"kind": "housing"}
+        else:
+            extraction_calls.append(request)
+            answer = {"intent": "estimate", "updates": [], "question": ""} if len(extraction_calls) == 1 else {
+                "intent": "clarify", "updates": [], "question": "How many cars does the garage fit?"}
+        return httpx.Response(200, json={"done": True, "message": {"content": json.dumps(answer)}})
+    current = {key: value for key, value in SAMPLE_FEATURES.items() if key != "Garage Cars"}
+    review = LocalLLM(Settings(), transport=httpx.MockTransport(handler)).parse(
+        "The garage fits either two or three cars; I am unsure.", current, categories)
+    assert not review.ready
+    assert review.intent == "clarify" and review.question

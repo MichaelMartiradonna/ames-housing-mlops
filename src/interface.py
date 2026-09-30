@@ -19,6 +19,16 @@ LABELS = {
     "Bldg Type": "Building type", "MS Zoning": "Zoning", "Central Air": "Central air",
 }
 CATEGORY_LABELS = {
+    # Labels from De Cock's DataDocumentation.txt; model category codes stay unchanged.
+    "Blmngtn": "Bloomington Heights", "Blueste": "Bluestem", "BrDale": "Briardale",
+    "BrkSide": "Brookside", "ClearCr": "Clear Creek", "Crawfor": "Crawford",
+    "Edwards": "Edwards", "Gilbert": "Gilbert", "Greens": "Greens",
+    "GrnHill": "Green Hills", "IDOTRR": "Iowa DOT and Rail Road", "Landmrk": "Landmark",
+    "MeadowV": "Meadow Village", "Mitchel": "Mitchell", "NPkVill": "Northpark Villa",
+    "NWAmes": "Northwest Ames", "NoRidge": "Northridge", "NridgHt": "Northridge Heights",
+    "SWISU": "South & West of Iowa State University", "Sawyer": "Sawyer",
+    "SawyerW": "Sawyer West", "Somerst": "Somerset", "StoneBr": "Stone Brook",
+    "Timber": "Timberland", "Veenker": "Veenker",
     "NAmes": "North Ames", "CollgCr": "College Creek", "OldTown": "Old Town",
     "1Story": "One story", "2Story": "Two story", "1.5Fin": "1½ story, finished",
     "1.5Unf": "1½ story, unfinished", "2.5Fin": "2½ story, finished",
@@ -28,6 +38,12 @@ CATEGORY_LABELS = {
     "RL": "Residential, low density", "RM": "Residential, medium density",
     "RH": "Residential, high density", "FV": "Floating village residential",
     "C (all)": "Commercial", "A (agr)": "Agricultural", "Y": "Yes", "N": "No",
+}
+CATEGORY_PHRASES = {
+    "1Story": ["1 story", "one story", "single story", "one storey", "single storey"],
+    "2Story": ["2 story", "two story", "two storey"],
+    "RL": ["low density residential"], "RM": ["medium density residential"],
+    "RH": ["high density residential"], "FV": ["floating village residential"],
 }
 INTEGER_FEATURES = {"Overall Qual", "Year Built", "Full Bath", "Garage Cars", "Bedroom AbvGr"}
 REQUIRED_FEATURES = ("Gr Liv Area", "Neighborhood", "Year Built", "Overall Qual")
@@ -48,6 +64,37 @@ UNIT_PATTERNS = {
     "ft": r"\b(?:ft|feet|foot)\b",
     "m": r"\b(?:m|met(?:er|re)s?)\b",
 }
+# These cues only bound an optional second look; the LLM still extracts values
+# and quotes, and all normal validation applies. Do not ask it to fill absent facts.
+FIELD_MENTIONS = {
+    "Gr Liv Area": r"\b(?:living|above[ -]ground)\b",
+    "Overall Qual": r"\b(?:quality|materials?|finish|rating)\b",
+    "Year Built": r"\b(?:built|construction|constructed)\b",
+    "Neighborhood": r"\bneighbou?rhood\b",
+    "Garage Cars": r"\b(?:garage|carport|cars?|parking)\b",
+    "Total Bsmt SF": r"\b(?:basement|bsmt)\b",
+    "Full Bath": r"\bbath(?:room)?s?\b",
+    "Bedroom AbvGr": r"\bbed(?:room)?s?\b",
+    "Lot Area": r"\b(?:lot|land|parcel|acres?)\b",
+    "Lot Frontage": r"\bfrontage\b",
+    "House Style": r"\b(?:stor(?:y|ey|ies)|style|split[ -](?:level|foyer))\b",
+    "Bldg Type": r"\b(?:single[ -]family|two[ -]family|town[ -]?(?:house|home)|duplex|detached|building type)\b",
+    "MS Zoning": r"\b(?:zoning|zoned|density|residential)\b",
+    "Central Air": r"\b(?:central air|air[ -]conditioning|air[ -]conditioned|aircon|ac)\b",
+}
+
+
+def mentioned_fields(message: str, fields: list[str], categories: dict) -> list[str]:
+    candidates = []
+    for key in fields:
+        patterns = [FIELD_MENTIONS[key]]
+        if key in categories and key != "Central Air":
+            patterns.extend(r"(?<!\w)" + re.escape(alias) + r"(?!\w)"
+                            for code in categories[key]
+                            for alias in {code, CATEGORY_LABELS.get(code, code)})
+        if any(re.search(pattern, message, flags=re.IGNORECASE) for pattern in patterns):
+            candidates.append(key)
+    return candidates
 SAMPLE_QUERY = (
     "Estimate a historical Ames sale price for a single-family detached, one-story home "
     "in North Ames with low-density residential zoning and central air. It was built in "
@@ -66,7 +113,7 @@ SAMPLE_FEATURES = {
 class ExtractedValue(BaseModel):
     model_config = ConfigDict(extra="forbid")
     name: str
-    value: StrictFloat | StrictInt | str
+    value: StrictFloat | StrictInt | str | None
     unit: Literal["sq_ft", "sq_m", "acres", "ft", "m", "none"]
     evidence: str = Field(min_length=1, max_length=500)
 
@@ -86,6 +133,9 @@ class Review:
     question: str = ""
     intent: str = "estimate"
     defaulted: list[str] = field(default_factory=list)
+    evidence: dict[str, dict] = field(default_factory=dict)
+    touched: list[str] = field(default_factory=list)
+    field_issues: dict[str, list[str]] = field(default_factory=dict)
 
     @property
     def ready(self) -> bool:
@@ -120,35 +170,53 @@ def validate_features(features: dict, categories: dict) -> Review:
             issues.append(f"Choose a supported value for {LABELS[key]}.")
         else:
             valid[key] = value
-    return Review(
+    review = Review(
         valid, [key for key in REQUIRED_FEATURES if key not in valid], issues,
         defaulted=[key for key in OPTIONAL_FEATURES if features.get(key) is None],
     )
+    review.field_issues = {
+        key: [issue for issue in issues if issue.startswith(LABELS[key])
+              or issue == f"Choose a supported value for {LABELS[key]}."]
+        for key in expected
+    }
+    review.field_issues = {key: items for key, items in review.field_issues.items() if items}
+    return review
 
 
 def review_extraction(extraction: Extraction, message: str, current: dict, categories: dict) -> Review:
     """Merge only quoted updates. Invalid edits remove stale values and block inference."""
-    merged, issues, seen = dict(current), [], set()
+    merged, issues, seen, evidence, field_issues = dict(current), [], set(), {}, {}
+    def reject(key, text):
+        issues.append(text)
+        field_issues.setdefault(key, []).append(text)
+        evidence.pop(key, None)
     for item in extraction.updates:
         merged.pop(item.name, None)
         if item.name in seen:
-            issues.append(f"Conflicting values for {item.name}; please enter one value.")
+            reject(item.name, f"Conflicting values for {item.name}; please enter one value.")
             continue
         seen.add(item.name)
         # Accept only cosmetic differences in whitespace and thousands separators.
         def normalize_quote(text):
             return " ".join(re.sub(r"(?<=\d),(?=\d{3}(?:\D|$))", "", text).casefold().split())
         if normalize_quote(item.evidence) not in normalize_quote(message):
-            issues.append(f"Please confirm {item.name}; its supporting text could not be verified.")
+            reject(item.name, f"Please confirm {item.name}; its supporting text could not be verified.")
             continue
         value = item.value
+        if value is None:
+            if item.name not in LABELS or not re.search(
+                r"\b(?:unknown|unsure|not sure|don't know|do not know|clear|remove|forget)\b",
+                item.evidence, flags=re.IGNORECASE,
+            ):
+                reject(item.name, f"Please confirm clearing {LABELS.get(item.name, item.name)} in the form.")
+            continue
         if isinstance(value, (int, float)):
             quote = normalize_quote(item.evidence)
             numbers = [float(token) for token in re.findall(r"-?(?:\d+(?:\.\d+)?|\.\d+)", quote)]
             words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
             numbers.extend(index for index, word in enumerate(words) if re.search(r"\b" + word + r"\b", quote))
             if not any(math.isclose(value, number, rel_tol=1e-9, abs_tol=1e-9) for number in numbers):
-                issues.append(f"Please confirm {LABELS.get(item.name, item.name)}; the extracted number does not match your text.")
+                reject(item.name, f"Please confirm {LABELS.get(item.name, item.name)}; the extracted number does not match your text.")
                 continue
         if item.name in AREA_FEATURES:
             factors = {"sq_ft": 1, "sq_m": 10.76391041671, "acres": 43560}
@@ -157,21 +225,54 @@ def review_extraction(extraction: Extraction, message: str, current: dict, categ
         else:
             factors = {"none": 1}
         if item.unit not in factors or (item.unit != "none" and not re.search(UNIT_PATTERNS[item.unit], item.evidence, flags=re.IGNORECASE)):
-            issues.append(f"Please specify the units for {LABELS.get(item.name, item.name)}.")
+            reject(item.name, f"Please specify the units for {LABELS.get(item.name, item.name)}.")
             continue
         if isinstance(value, (int, float)):
             value *= factors[item.unit]
         elif item.name in categories:
+            if item.name == "Neighborhood":
+                # Names such as North Ames and Northwest Ames are distinct categories.
+                # Resolve an exact, unique quoted name/code instead of trusting a
+                # different code invented by the language model. Never fuzzy-match.
+                quoted = normalize_quote(item.evidence)
+                matches = [code for code in categories[item.name] if any(
+                    re.search(r"(?<!\w)" + re.escape(normalize_quote(alias)) + r"(?!\w)", quoted)
+                    for alias in {code, CATEGORY_LABELS.get(code, code)}
+                )]
+                if len(matches) != 1:
+                    reject(item.name, "Please choose one Ames neighborhood; its name could not be matched unambiguously to your text.")
+                    continue
+                value = matches[0]
             # Local models sometimes return the display label instead of its code.
             # Normalize only an exact, unambiguous alias from the allowed category list.
             matches = [code for code in categories[item.name]
                        if value.casefold() in {code.casefold(), CATEGORY_LABELS.get(code, code).casefold()}]
             if len(matches) == 1:
                 value = matches[0]
+            if item.name != "Neighborhood" and value in categories[item.name]:
+                def words(text):
+                    return re.sub(r"[^a-z0-9]+", " ", text.casefold()).strip()
+                quote = " " + words(item.evidence) + " "
+                aliases = [value, CATEGORY_LABELS.get(value, value), *CATEGORY_PHRASES.get(value, [])]
+                grounded = any(" " + words(alias) + " " in quote for alias in aliases)
+                if item.name == "Central Air":
+                    air = r"(?:central air|air conditioning|air conditioned|aircon|ac)"
+                    mentions_air = bool(re.search(r"\b" + air + r"\b", quote))
+                    negative = bool(re.search(r"\b(?:no|without|not have|doesn t have|lacks?) " + air + r"\b", quote)
+                                    or re.search(r"\b" + air + r" (?:no|n|none)\b", quote))
+                    grounded = mentions_air and (value == "N" if negative else value == "Y")
+                if not grounded:
+                    reject(item.name, f"Please confirm {LABELS[item.name]}; its quoted text does not state that category.")
+                    continue
         merged[item.name] = value
+        evidence[item.name] = {"quote": item.evidence, "stated_value": item.value, "unit": item.unit}
     review = validate_features(merged, categories)
     review.issues.extend(issues)
     review.question, review.intent = extraction.question, extraction.intent
+    review.touched = sorted(seen)
+    review.evidence = {key: value for key, value in evidence.items() if key in review.features}
+    for key, items in field_issues.items():
+        review.field_issues.setdefault(key, []).extend(items)
     return review
 
 
@@ -189,7 +290,10 @@ def extraction_prompt(categories: dict) -> str:
         "living area includes/excludes basement when ambiguous. Use the numerical value AS STATED; "
         "code converts units. Updates include only facts explicitly in the latest message, each with "
         "an exact substring evidence quote. Do not repeat old fields from context. Use canonical "
-        "category codes. House Style and Bldg Type are separate: one-story means House Style=1Story, "
+        "category codes. If the user explicitly says an already-known field is unknown or asks to "
+        "clear it, return value null with evidence quoting that request and unit none. Omit "
+        "unstated fields; never clear them. "
+        "House Style and Bldg Type are separate: one-story means House Style=1Story, "
         "single-family detached means Bldg Type=1Fam. If ambiguous, omit that field and ask a short question; never choose between "
         "conflicting values. question must be empty when the stated facts are clear. "
         "Only Gr Liv Area, Neighborhood, Year Built and Overall Qual are required. "
