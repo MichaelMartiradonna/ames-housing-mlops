@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="84" viewBox="0 0 960 84" role="img" aria-labelledby="title desc">
+  <title id="title">From a home description to an explained estimate</title>
+  <desc id="desc">Plain English goes to extraction with quotes, then user confirmation, the saved Random Forest pipeline, a price, and a language explanation.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0 0L6 3L0 6Z" fill="#276a59"/>
+    </marker>
+  </defs>
+  <rect width="960" height="84" rx="10" fill="#fbfaf7"/>
+  <g fill="#f0f0e9" stroke="#a8b6ad">
+    <rect x="12" y="18" width="130" height="48" rx="8"/>
+    <rect x="170" y="18" width="150" height="48" rx="8"/>
+    <rect x="348" y="18" width="125" height="48" rx="8"/>
+    <rect x="501" y="18" width="175" height="48" rx="8"/>
+    <rect x="704" y="18" width="80" height="48" rx="8"/>
+    <rect x="812" y="18" width="136" height="48" rx="8"/>
+  </g>
+  <g fill="none" stroke="#276a59" stroke-width="2" marker-end="url(#arrow)">
+    <path d="M145 42H165"/><path d="M323 42H343"/>
+    <path d="M476 42H496"/><path d="M679 42H699"/>
+    <path d="M787 42H807"/>
+  </g>
+  <g fill="#233632" font-family="Arial, sans-serif" font-size="16" text-anchor="middle">
+    <text x="77" y="48">Plain English</text>
+    <text x="245" y="48">Extract + quotes</text>
+    <text x="410.5" y="48">You confirm</text>
+    <text x="588.5" y="48">Saved RF pipeline</text>
+    <text x="744" y="48">Price</text>
+    <text x="880" y="48">Explanation</text>
+  </g>
+</svg>

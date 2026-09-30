@@ -41,11 +41,7 @@ After confirmation: **$219,776**, calculated by the saved pipeline and explained
 
 ## How it works
 
-```mermaid
-flowchart LR
-    A[Plain English] --> B[Extract + quotes] --> C[You confirm]
-    C --> D[Saved RF pipeline] --> E[Price] --> F[Explanation]
-```
+![Plain English → extract and quotes → you confirm → saved Random Forest pipeline → price → explanation](docs/images/architecture.svg)
 
 ## Results
 
