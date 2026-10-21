@@ -1,17 +1,20 @@
 # Ames Home-Price Lab
 
-## For a hiring manager
+## For an implementation team
 
-Describe a home in plain English.\
-A small local language model extracts the details into a form you can check and correct.\
-Missing optional details use clearly labeled defaults from the training data.\
-A saved Random Forest estimates a historical price, and the language model explains the result.\
-The app covers Ames, Iowa sales from 2006–2010 and handles out-of-scope requests, such as a Chicago condo.\
-On 586 held-out Ames homes using all 14 features, average error (MAE) was about **$17,765**.\
-That is about **72% lower error** than a “guess the training median” baseline, whose MAE was **$63,823**.\
+Enter a home’s details, review them, and a saved Random Forest estimates its historical sale price in Ames, Iowa. Run locally, you can describe the home in plain English instead and a small local language model fills the form for you.
+
+**The number that matters:** mean absolute error of **$17,765** on 586 held-out homes, against **$63,823** for a “guess the training median” baseline: **72% lower**.
+
+**[Try it live](https://ames-home-price-lab.streamlit.app/)** (manual entry, saved model) · **[Watch the demo · 5:45](https://youtu.be/1mW6WnJn5k4)** (earlier interface, same price model)
+
+**How it was built**
+
+- Training-fitted preprocessing (imputation, scaling, one-hot encoding) in one scikit-learn pipeline; five Random Forest configurations tracked as MLflow experiments; the lowest validation MAE selects the model before any test score is read.
+- The selected pipeline is exported with a checksum manifest and verified for prediction parity on all 586 test rows; the app downloads and checks that file at startup.
+- A Docker image for the app, with GitHub Actions jobs that run the tests, the training, and the container check on pushes to main and on pull requests.
+
 It estimates historical prices—not today’s market value or a professional appraisal.
-
-**[Watch the demo · 5:45](https://youtu.be/1mW6WnJn5k4)** — earlier interface, same price model.
 
 ## Try it
 

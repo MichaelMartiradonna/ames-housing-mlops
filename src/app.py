@@ -10,9 +10,32 @@ import streamlit as st
 from src.config import load_config
 from src.interface import (CATEGORY_LABELS, LABELS, OPTIONAL_FEATURES, QUICK_QUERY,
                            REQUIRED_FEATURES, SAMPLE_QUERY, validate_features)
-from src.llm import LLMError, LocalLLM, Settings
 from src.serving import load_serving_model, training_defaults
 from src.workflow import HomeWorkflow
+
+DEMO_VIDEO_URL = "https://youtu.be/1mW6WnJn5k4"
+README_URL = "https://github.com/MichaelMartiradonna/ames-housing-mlops#readme"
+MANUAL_ONLY_BANNER = "Hosted demo: manual entry, saved model, no language model"
+
+
+def manual_only() -> bool:
+    """AMES_MANUAL_ONLY=1 selects the hosted demo: form only, no language-model path."""
+    return os.getenv("AMES_MANUAL_ONLY", "").strip() == "1"
+
+
+if manual_only():
+    # The hosted demo never imports the local language-model client.
+    LLMError = LocalLLM = Settings = None
+else:
+    from src.llm import LLMError, LocalLLM, Settings
+
+
+class ManualSettings:
+    """Stand-in for src.llm.Settings when the language model is never used."""
+    enabled = False
+    base_url = ""
+    model = "not used in this hosted demo"
+    timeout = 0.0
 
 
 @st.cache_resource
@@ -204,8 +227,8 @@ def render_field(key, home, review, metadata, defaults, required):
         st.caption(f"Changed: {display_value(change['before'])} → {display_value(change['after'])}")
 
 
-def render_review(home, settings, model, metadata, defaults):
-    st.subheader("2. Review the details")
+def render_review(home, settings, model, metadata, defaults, heading="2. Review the details"):
+    st.subheader(heading)
     review = home.review(metadata["categories"])
     known_optional = sum(key in review.features for key in OPTIONAL_FEATURES)
     st.caption(f"{4 - len(review.missing)} of 4 required details supplied · {known_optional} optional details supplied · {len(review.defaulted)} defaults")
@@ -257,12 +280,12 @@ def render_review(home, settings, model, metadata, defaults):
                 st.error(str(exc))
 
 
-def render_result(home, settings, metadata):
+def render_result(home, settings, metadata, heading="3. Your historical estimate"):
     result = home.result
     if not result:
         return
     with st.container(border=True, key="result"):
-        st.subheader("3. Your historical estimate", anchor="historical-estimate")
+        st.subheader(heading, anchor="historical-estimate")
         if home.stale:
             st.warning("Previous estimate · Based on your previous details. Review the changes and choose Update estimate.")
         st.metric("Historical sale price · Ames, 2006–2010", f"${result['price']:,.0f}")
@@ -320,7 +343,9 @@ def render_method(metadata, settings):
 
 def main():
     st.set_page_config(page_title="Ames · Home-price lab", page_icon="🏡", layout="wide")
-    settings = Settings.from_env()
+    manual = manual_only()
+    # Manual-only mode reads nothing from .env and never constructs the language client.
+    settings = ManualSettings() if manual else Settings.from_env()
     if os.getenv("AMES_HOSTED", "false").lower() == "true" and settings.enabled:
         st.error("This hosted demo must run with language features disabled. Use the local app for the full workflow.")
         st.stop()
@@ -342,22 +367,32 @@ def main():
     home = st.session_state.home
     render_style()
     st.caption("AMES / HOME-PRICE LAB")
-    st.title("Describe a home. Explore its historical price.")
-    st.write("Plain English in. Reviewed details. A model-backed estimate.")
+    if manual:
+        st.info(f"{MANUAL_ONLY_BANNER}. The full app runs locally with Ollama: "
+                f"[read the README]({README_URL}) · [watch the demo · 5:45]({DEMO_VIDEO_URL}).")
+        st.title("Enter a home. Explore its historical price.")
+        st.write("Four required facts. Ten optional details with disclosed defaults. A model-backed estimate.")
+    else:
+        st.title("Describe a home. Explore its historical price.")
+        st.write("Plain English in. Reviewed details. A model-backed estimate.")
     st.caption("Ames, Iowa · Sales from 2006–2010 · Not a current appraisal")
     estimate_tab, method_tab = st.tabs(["Explore a home", "Model & limitations"])
     with estimate_tab:
         with st.container(key="steps"):
             step, reset = st.columns([3, 1])
-            step.caption("DESCRIBE  →  REVIEW  →  ESTIMATE")
+            step.caption("ENTER  →  REVIEW  →  ESTIMATE" if manual else "DESCRIBE  →  REVIEW  →  ESTIMATE")
             reset.button("Start a new home", on_click=reset_home, width="stretch")
         with st.container(key="workspace"):
-            left, right = st.columns([.9, 1.1], gap="large")
-            with left:
-                render_description(home, settings, metadata)
-            with right:
-                render_review(home, settings, model, metadata, defaults)
-        render_result(home, settings, metadata)
+            if manual:
+                render_review(home, settings, model, metadata, defaults, heading="1. Enter and review the details")
+            else:
+                left, right = st.columns([.9, 1.1], gap="large")
+                with left:
+                    render_description(home, settings, metadata)
+                with right:
+                    render_review(home, settings, model, metadata, defaults)
+        render_result(home, settings, metadata,
+                      heading="2. Your historical estimate" if manual else "3. Your historical estimate")
     with method_tab:
         render_method(metadata, settings)
 
