@@ -6,7 +6,7 @@ Enter a home’s details, review them, and a saved Random Forest estimates its h
 
 **The number that matters:** mean absolute error of **$17,765** on 586 held-out homes, against **$63,823** for a “guess the training median” baseline: **72% lower**.
 
-**[Try it live](HOSTED_URL_TBD)** (manual entry, saved model) · **[Watch the demo · 5:45](https://youtu.be/1mW6WnJn5k4)** (earlier interface, same price model)
+**[Try it live](https://ames-home-price-lab.streamlit.app/)** (manual entry, saved model) · **[Watch the demo · 5:45](https://youtu.be/1mW6WnJn5k4)** (earlier interface, same price model)
 
 **How it was built**
 
