@@ -22,10 +22,10 @@ Global filters across the dashboard (`Apply to Worksheets -> All Using This Data
 
 - **Highest median sale prices:** Stone Brook (\$319,000, `n=51`), Northridge Heights (\$317,750, `n=166`), and Northridge (\$302,000, `n=71`).
 - **Highest held-out dollar error (neighborhoods with ≥ 5 held-out homes):**
-  - Crawford: **\$52,526 MAE** (`n=14`, vs. \$92,118 baseline) — older, heterogeneous homes with wide price spread.
-  - Northridge Heights: **\$36,827 MAE** (`n=45`, vs. \$186,582 baseline — 80% error reduction) — luxury price tier drives larger absolute dollar swings.
+  - Crawford: **\$52,526 MAE** (`n=14`, vs. \$92,118 baseline) — the largest miss in percentage terms too (median 19.5% vs. 6.8% across all held-out homes); homes there are older (median year built 1940) and the model under-predicts by \$29,030 on average.
+  - Northridge Heights: **\$36,827 MAE** (`n=45`, vs. \$186,582 baseline — 80% error reduction) — median percentage error 8.6%, close to the 6.8% overall, so the higher dollar error mostly reflects higher prices.
   - Stone Brook: **\$30,270 MAE** (`n=15`, vs. \$158,348 baseline — 81% error reduction).
-- **Lowest held-out dollar error (≥ 5 held-out homes):** Meadow Village (**\$5,984 MAE**, `n=9`), Briardale (**\$7,632 MAE**, `n=6`), Northpark Villa (**\$8,167 MAE**, `n=8`), Sawyer (**\$9,180 MAE**, `n=32`), and Gilbert (**\$9,869 MAE**, `n=27`) — uniform housing stock yields tight predictions.
+- **Lowest held-out dollar error (≥ 5 held-out homes):** Meadow Village (**\$5,984 MAE**, `n=9`), Briardale (**\$7,632 MAE**, `n=6`), Northpark Villa (**\$8,167 MAE**, `n=8`), Sawyer (**\$9,180 MAE**, `n=32`), and Gilbert (**\$9,869 MAE**, `n=27`) — all five have median sale prices at or below \$183,000.
 
 ## Regenerating the Tableau Dataset
 
